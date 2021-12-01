@@ -1,4 +1,4 @@
-import 'package:adventofcode2021/utils/input_util.dart';
+import 'package:adventofcode2021/util/input.dart';
 
 void main() {
   final task = Day1();
@@ -15,7 +15,7 @@ class Day1 {
   static const int day = 1;
 
   List<int> input() {
-    return InputUtil.readLinesAsInt(day);
+    return readLinesAsInt(day);
   }
 
   int part1(List<int> input) {
