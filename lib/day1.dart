@@ -1,19 +1,24 @@
 import 'package:adventofcode2021/utils/input_util.dart';
 
+void main() {
+  final task = Day1();
+
+  final input = task.input();
+  final solution1 = task.part1(input);
+  final solution2 = task.part2(input);
+
+  print("Solution part1: [ $solution1 ]");
+  print("Solution part2: [ $solution2 ]");
+}
+
 class Day1 {
   static const int day = 1;
 
-  int part1solution() {
-    final input = InputUtil.readLinesAsInt(day);
-    return part1calc(input);
+  List<int> input() {
+    return InputUtil.readLinesAsInt(day);
   }
 
-  int part2solution() {
-    final input = InputUtil.readLinesAsInt(day);
-    return part2calc(input);
-  }
-
-  int part1calc(List<int> input) {
+  int part1(List<int> input) {
     var incs = 0;
     var lastValue = -1;
     for (var value in input) {
@@ -26,7 +31,7 @@ class Day1 {
     return incs - 1;
   }
 
-  int part2calc(List<int> input) {
+  int part2(List<int> input) {
     final threesome = List<int>.filled(input.length, 0, growable: true);
     for (int i = 2; i < input.length; i++) {
       threesome[i] += input[i - 2];
@@ -35,8 +40,6 @@ class Day1 {
     }
     threesome.removeRange(0, 2);
 
-    print(threesome);
-
-    return part1calc(threesome);
+    return part1(threesome);
   }
 }
