@@ -1,4 +1,5 @@
 import 'package:adventofcode2021/util/input.dart';
+import 'package:adventofcode2021/util/window.dart';
 
 void main() {
   final task = Day1();
@@ -32,14 +33,7 @@ class Day1 {
   }
 
   int part2(List<int> input) {
-    final threesome = List<int>.filled(input.length, 0, growable: true);
-    for (int i = 2; i < input.length; i++) {
-      threesome[i] += input[i - 2];
-      threesome[i] += input[i - 1];
-      threesome[i] += input[i];
-    }
-    threesome.removeRange(0, 2);
-
-    return part1(threesome);
+    var slidingWindows = slidingWindow(input, 3);
+    return part1(slidingWindows);
   }
 }
