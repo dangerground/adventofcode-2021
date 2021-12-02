@@ -1,3 +1,4 @@
+import 'package:adventofcode2021/util/directions.dart';
 import 'package:adventofcode2021/util/input.dart';
 
 void main() {
@@ -21,38 +22,46 @@ class Day2 {
   int part1(List<String> input) {
     var x = 0;
     var y = 0;
+
     for (var value in input) {
-      if (value.startsWith("forward")) {
-        var num = value.substring(8);
-        x += int.parse(num);
-      } else if (value.startsWith("down")) {
-        var num = value.substring(5);
-        y += int.parse(num);
-      } else if (value.startsWith("up")) {
-        var num = value.substring(3);
-        y -= int.parse(num);
+      var instr = DirectionInstruction.parse(value);
+      switch (instr.direction) {
+        case Direction.forward:
+          x += instr.num;
+          break;
+        case Direction.up:
+          y -= instr.num;
+          break;
+        case Direction.down:
+          y += instr.num;
+          break;
       }
     }
-    return x*y;
+
+    return x * y;
   }
 
   int part2(List<String> input) {
     var x = 0;
     var y = 0;
     var aim = 0;
+
     for (var value in input) {
-      if (value.startsWith("forward")) {
-        var num = value.substring(8);
-        x += int.parse(num);
-        y += aim * int.parse(num);
-      } else if (value.startsWith("down")) {
-        var num = value.substring(5);
-        aim += int.parse(num);
-      } else if (value.startsWith("up")) {
-        var num = value.substring(3);
-        aim -= int.parse(num);
+      var instr = DirectionInstruction.parse(value);
+      switch (instr.direction) {
+        case Direction.forward:
+          x += instr.num;
+          y += aim * instr.num;
+          break;
+        case Direction.up:
+          aim -= instr.num;
+          break;
+        case Direction.down:
+          aim += instr.num;
+          break;
       }
     }
-    return x*y;
+
+    return x * y;
   }
 }
