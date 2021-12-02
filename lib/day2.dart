@@ -20,38 +20,38 @@ class Day2 {
   }
 
   int part1(List<String> input) {
-    var x = 0;
-    var y = 0;
+    var horizontal = 0;
+    var depth = 0;
 
     for (var value in input) {
       var instr = DirectionInstruction.parse(value);
       switch (instr.direction) {
         case Direction.forward:
-          x += instr.num;
+          horizontal += instr.num;
           break;
         case Direction.up:
-          y -= instr.num;
+          depth -= instr.num;
           break;
         case Direction.down:
-          y += instr.num;
+          depth += instr.num;
           break;
       }
     }
 
-    return x * y;
+    return horizontal * depth;
   }
 
   int part2(List<String> input) {
-    var x = 0;
-    var y = 0;
+    var horizontal = 0;
+    var depth = 0;
     var aim = 0;
 
     for (var value in input) {
       var instr = DirectionInstruction.parse(value);
       switch (instr.direction) {
         case Direction.forward:
-          x += instr.num;
-          y += aim * instr.num;
+          horizontal += instr.num;
+          depth += aim * instr.num;
           break;
         case Direction.up:
           aim -= instr.num;
@@ -62,6 +62,6 @@ class Day2 {
       }
     }
 
-    return x * y;
+    return horizontal * depth;
   }
 }
