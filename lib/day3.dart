@@ -12,6 +12,14 @@ void main() {
   print("Solution part2: [ $solution2 ]");
 }
 
+typedef Bit = int;
+extension BitTogglee on Bit {
+  int toggle() {
+    if (this < 0 || this > 1) throw 'Unsupported Number';
+    return this == 1 ? 0 : 1;
+  }
+}
+
 class Day3 {
   static const int day = 3;
 
@@ -20,21 +28,21 @@ class Day3 {
   }
 
   int part1(List<String> input) {
-    var gammaRate = "";
-    var epsilonRate = "";
+    var gamma = "";
+    var epsilon = "";
     for (var pos = 0; pos < input.first.length; pos++) {
-      var gammaBit = mostCommonBit(input, pos);
-      var epsilonBit = gammaBit == 1 ? 0 : 1;
+      var commonBit = mostCommonBit(input, pos);
+      var uncommonBit = commonBit.toggle();
 
-      gammaRate = "$gammaRate$gammaBit";
-      epsilonRate = "$epsilonRate$epsilonBit";
+      gamma = "$gamma$commonBit";
+      epsilon = "$epsilon$uncommonBit";
     }
 
-    var powerConsumption = Binary(gammaRate).value * Binary(epsilonRate).value;
+    var powerConsumption = Binary(gamma).value * Binary(epsilon).value;
     return powerConsumption;
   }
 
-  int mostCommonBit(List<String> input, bit) {
+  Bit mostCommonBit(List<String> input, bit) {
     var numOfOnes =
         input.map((e) => e[bit]).where((element) => element == "1").length;
 
@@ -46,21 +54,17 @@ class Day3 {
   }
 
   int part2(List<String> input) {
-    var oxygenGeneratorRating =
-        reduceBy(input, (inp, pos) => mostCommonBit(inp, pos));
+    var oxygenGenerator = reduceBy(input, (l, p) => mostCommonBit(l, p));
+    var co2Scrubber = reduceBy(input, (l, p) => mostCommonBit(l, p).toggle());
 
-    var co2ScrubberRating =
-        reduceBy(input, (inp, pos) => mostCommonBit(inp, pos) == 1 ? 0 : 1);
-
-    return co2ScrubberRating * oxygenGeneratorRating;
+    return co2Scrubber * oxygenGenerator;
   }
 
   int reduceBy(List<String> input, Function(List<String>, int) fun) {
     var remaining = input;
     for (var pos = 0; remaining.length > 1; pos++) {
       var common = fun(remaining, pos);
-      remaining =
-          remaining.where((element) => element[pos] == "$common").toList();
+      remaining = remaining.where((e) => e[pos] == "$common").toList();
     }
 
     return Binary(remaining.first).value;
