@@ -20,11 +20,10 @@ class Day3 {
   }
 
   int part1(List<String> input) {
-    var l = input[0].length;
     var gammaRate = "";
     var epsilonRate = "";
-    for (var i = 0; i < l; i++) {
-      var gammaBit = mostCommonBit(input, i);
+    for (var pos = 0; pos < input.first.length; pos++) {
+      var gammaBit = mostCommonBit(input, pos);
       var epsilonBit = gammaBit == 1 ? 0 : 1;
 
       gammaRate = "$gammaRate$gammaBit";
@@ -32,48 +31,38 @@ class Day3 {
     }
 
     var powerConsumption = Binary(gammaRate).value * Binary(epsilonRate).value;
-
     return powerConsumption;
   }
 
   int mostCommonBit(List<String> input, bit) {
-    var firstBits = input.map((e) => e[bit]);
-    var firstOnes = firstBits.where((element) => element == "1");
+    var numOfOnes =
+        input.map((e) => e[bit]).where((element) => element == "1").length;
 
-    var gamma = 0;
-    if (firstOnes.length >= firstBits.length - firstOnes.length) {
-      gamma = 1;
+    if (numOfOnes >= input.length - numOfOnes) {
+      return 1;
     }
-    return gamma;
+
+    return 0;
   }
 
   int part2(List<String> input) {
-    var remaining = input;
-    var pos = 0;
-    do {
-      var common = mostCommonBit(remaining, pos);
-      remaining = remainder(remaining, pos, common);
+    var oxygenGeneratorRating =
+        reduceBy(input, (inp, pos) => mostCommonBit(inp, pos));
 
-      pos++;
-    } while (remaining.length > 1);
+    var co2ScrubberRating =
+        reduceBy(input, (inp, pos) => mostCommonBit(inp, pos) == 1 ? 0 : 1);
 
-    var oxygenGeneratorRating = Binary(remaining[0]).value;
-
-    var remaining2 = input;
-    var pos2 = 0;
-    do {
-      var common = mostCommonBit(remaining2, pos2) == 1 ? 0 : 1;
-      remaining2 = remainder(remaining2, pos2, common);
-
-      pos2++;
-    } while (remaining2.length > 1);
-
-    var Co2ScrubberRating = Binary(remaining2[0]).value;
-
-    return Co2ScrubberRating * oxygenGeneratorRating;
+    return co2ScrubberRating * oxygenGeneratorRating;
   }
 
-  List<String> remainder(List<String> input, int pos, int common) {
-    return input.where((element) => element[pos] == "$common").toList();
+  int reduceBy(List<String> input, Function(List<String>, int) fun) {
+    var remaining = input;
+    for (var pos = 0; remaining.length > 1; pos++) {
+      var common = fun(remaining, pos);
+      remaining =
+          remaining.where((element) => element[pos] == "$common").toList();
+    }
+
+    return Binary(remaining.first).value;
   }
 }
