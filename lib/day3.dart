@@ -21,29 +21,27 @@ class Day3 {
 
   int part1(List<String> input) {
     var l = input[0].length;
-    var gammaStr = "";
-    var epsilonStr = "";
+    var gammaRate = "";
+    var epsilonRate = "";
     for (var i = 0; i < l; i++) {
-      var gammaBit = commonBit(input, i);
+      var gammaBit = mostCommonBit(input, i);
       var epsilonBit = gammaBit == 1 ? 0 : 1;
 
-      gammaStr = "$gammaStr$gammaBit";
-      epsilonStr = "$epsilonStr$epsilonBit";
+      gammaRate = "$gammaRate$gammaBit";
+      epsilonRate = "$epsilonRate$epsilonBit";
     }
 
-    var gamma = Binary(gammaStr).value;
-    var epsilon = Binary(epsilonStr).value;
+    var powerConsumption = Binary(gammaRate).value * Binary(epsilonRate).value;
 
-    return gamma * epsilon;
+    return powerConsumption;
   }
 
-  int commonBit(List<String> input, bit) {
-
+  int mostCommonBit(List<String> input, bit) {
     var firstBits = input.map((e) => e[bit]);
     var firstOnes = firstBits.where((element) => element == "1");
 
     var gamma = 0;
-    if (firstOnes.length >= firstBits.length-firstOnes.length) {
+    if (firstOnes.length >= firstBits.length - firstOnes.length) {
       gamma = 1;
     }
     return gamma;
@@ -53,30 +51,26 @@ class Day3 {
     var remaining = input;
     var pos = 0;
     do {
-      var common = commonBit(remaining, pos);
+      var common = mostCommonBit(remaining, pos);
       remaining = remainder(remaining, pos, common);
-      print(remaining);
 
       pos++;
+    } while (remaining.length > 1);
 
-    } while (remaining.length > 1 && pos <= input[0].length);
-
-    var oxygen = Binary(remaining[0]).value;
+    var oxygenGeneratorRating = Binary(remaining[0]).value;
 
     var remaining2 = input;
     var pos2 = 0;
     do {
-      var common = commonBit(remaining2, pos2) == 1 ? 0 : 1;
+      var common = mostCommonBit(remaining2, pos2) == 1 ? 0 : 1;
       remaining2 = remainder(remaining2, pos2, common);
-      print(remaining2);
 
       pos2++;
+    } while (remaining2.length > 1);
 
-    } while (remaining2.length > 1 && pos2 <= input[0].length);
+    var Co2ScrubberRating = Binary(remaining2[0]).value;
 
-    var scrubber = Binary(remaining2[0]).value;
-
-    return scrubber* oxygen;
+    return Co2ScrubberRating * oxygenGeneratorRating;
   }
 
   List<String> remainder(List<String> input, int pos, int common) {
