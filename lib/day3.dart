@@ -1,4 +1,5 @@
 import 'package:adventofcode2021/util/input.dart';
+import 'package:quantity/number.dart';
 
 void main() {
   final task = Day3();
@@ -19,16 +20,19 @@ class Day3 {
   }
 
   int part1(List<String> input) {
-
     var l = input[0].length;
-    var gamma = 0;
-    var epsilon = 0;
+    var gammaStr = "";
+    var epsilonStr = "";
     for (var i = 0; i < l; i++) {
-      var bit = commonBit(input, i);
+      var gammaBit = commonBit(input, i);
+      var epsilonBit = gammaBit == 1 ? 0 : 1;
 
-      gamma += bit << (l-i-1);
-      epsilon += (bit == 1 ? 0 : 1) << (l-i-1);
+      gammaStr = "$gammaStr$gammaBit";
+      epsilonStr = "$epsilonStr$epsilonBit";
     }
+
+    var gamma = Binary(gammaStr).value;
+    var epsilon = Binary(epsilonStr).value;
 
     return gamma * epsilon;
   }
@@ -46,8 +50,6 @@ class Day3 {
   }
 
   int part2(List<String> input) {
-    var byFirstBit = input.map((e) => [e[0], e]);
-
     var remaining = input;
     var pos = 0;
     do {
@@ -59,7 +61,7 @@ class Day3 {
 
     } while (remaining.length > 1 && pos <= input[0].length);
 
-    var oxygen = binToInt(remaining[0]);
+    var oxygen = Binary(remaining[0]).value;
 
     var remaining2 = input;
     var pos2 = 0;
@@ -72,21 +74,9 @@ class Day3 {
 
     } while (remaining2.length > 1 && pos2 <= input[0].length);
 
-    var scrubber = binToInt(remaining2[0]);
+    var scrubber = Binary(remaining2[0]).value;
 
     return scrubber* oxygen;
-  }
-
-  int binToInt(String bin) {
-
-    var l = bin.length;
-    var result = 0;
-    for (var i = 0; i < l; i++) {
-      var bit = int.parse(bin[i]);
-
-      result += bit << (l-i-1);
-    }
-    return result;
   }
 
   List<String> remainder(List<String> input, int pos, int common) {
