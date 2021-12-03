@@ -8,3 +8,7 @@ build/
 # IDEA
 .idea
 *.iml
+
+# templates
+lib/day_t.dart
+test/day_t_test.dart
