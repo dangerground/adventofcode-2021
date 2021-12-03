@@ -35,7 +35,7 @@ void main() {
       final result = task.part2(input);
 
       // then
-      expect(result, equals(666));
+      expect(result, equals(230));
     });
   });
 }

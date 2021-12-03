@@ -39,13 +39,57 @@ class Day3 {
     var firstOnes = firstBits.where((element) => element == "1");
 
     var gamma = 0;
-    if (firstOnes.length > firstBits.length-firstOnes.length) {
+    if (firstOnes.length >= firstBits.length-firstOnes.length) {
       gamma = 1;
     }
     return gamma;
   }
 
   int part2(List<String> input) {
-    return -1;
+    var byFirstBit = input.map((e) => [e[0], e]);
+
+    var remaining = input;
+    var pos = 0;
+    do {
+      var common = commonBit(remaining, pos);
+      remaining = remainder(remaining, pos, common);
+      print(remaining);
+
+      pos++;
+
+    } while (remaining.length > 1 && pos <= input[0].length);
+
+    var oxygen = binToInt(remaining[0]);
+
+    var remaining2 = input;
+    var pos2 = 0;
+    do {
+      var common = commonBit(remaining2, pos2) == 1 ? 0 : 1;
+      remaining2 = remainder(remaining2, pos2, common);
+      print(remaining2);
+
+      pos2++;
+
+    } while (remaining2.length > 1 && pos2 <= input[0].length);
+
+    var scrubber = binToInt(remaining2[0]);
+
+    return scrubber* oxygen;
+  }
+
+  int binToInt(String bin) {
+
+    var l = bin.length;
+    var result = 0;
+    for (var i = 0; i < l; i++) {
+      var bit = int.parse(bin[i]);
+
+      result += bit << (l-i-1);
+    }
+    return result;
+  }
+
+  List<String> remainder(List<String> input, int pos, int common) {
+    return input.where((element) => element[pos] == "$common").toList();
   }
 }
