@@ -14,12 +14,12 @@ void main() {
 class Day4 {
   static const int day = 4;
 
-  List<String> input() {
-    return readLinesAsString(day);
+  List<List<String>> input() {
+    return readLinesInBatches(day);
   }
 
-  int part1(List<String> input) {
-    var numbers = input[0].split(",").map((e) => int.parse(e));
+  int part1(List<List<String>> input) {
+    var numbers = input.first[0].split(",").map((e) => int.parse(e));
     var fields = getFields(input);
 
     for (var number in numbers) {
@@ -45,34 +45,21 @@ class Day4 {
     }
   }
 
-  List<Field> getFields(List<String> input) {
-    var fields = <Field>[];
-    var field = Field();
-    for (var element in input.skip(2)) {
-      if (element.isEmpty) {
-        fields.add(field);
-        field = Field();
-        continue;
-      }
-
-      var tmp = element
-          .trim()
-          .split(RegExp("\\s+"))
-          .map((e) => Cell(int.parse(e)))
-          .toList();
-
-      field.add(tmp);
-    }
-    fields.add(field);
-
-    var usableFields =
-        fields.where((element) => element[0].isNotEmpty).toList();
-
-    return usableFields;
+  List<Field> getFields(List<List<String>> input) {
+    return input
+        .skip(1)
+        .map((batch) => Field(batch
+            .map((line) => line
+                .trim()
+                .split(RegExp("\\s+"))
+                .map((e) => Cell(int.parse(e)))
+                .toList())
+            .toList()))
+        .toList();
   }
 
-  int part2(List<String> input) {
-    var numbers = input[0].split(",").map((e) => int.parse(e));
+  int part2(List<List<String>> input) {
+    var numbers = input.first[0].split(",").map((e) => int.parse(e));
     var fields = getFields(input);
 
     var toWin = <int>{};
@@ -103,6 +90,10 @@ class Day4 {
 
 class Field {
   List<List<Cell>> internal = [];
+
+  Field(List<List<Cell>> input) {
+    internal = input;
+  }
 
   void add(List<Cell> tmp) {
     internal.add(tmp);
