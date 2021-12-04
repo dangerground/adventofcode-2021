@@ -28,7 +28,6 @@ class Day4 {
         checkField(field, number);
         if (field.hasWon()) {
           print("$i: ${field.uncheckedNumbersSum()} * $number");
-//          printFields(fields);
           return field.uncheckedNumbersSum() * number;
         }
       }
@@ -73,7 +72,6 @@ class Day4 {
   }
 
   int part2(List<String> input) {
-
     var numbers = input[0].split(",").map((e) => int.parse(e));
     var fields = getFields(input);
 
@@ -99,25 +97,12 @@ class Day4 {
   }
 
   void checkField(Field field, int number) {
-    for (var line in field.lines()) {
-      for (var cell in line) {
-        if (cell.number == number) {
-          cell.checked = true;
-          return;
-        }
-      }
-    }
+    field.check(number);
   }
 }
 
 class Field {
   List<List<Cell>> internal = [];
-
-  Field();
-
-  Field.from(Iterable<List<Cell>> defined) {
-    internal = defined.toList();
-  }
 
   void add(List<Cell> tmp) {
     internal.add(tmp);
@@ -127,18 +112,12 @@ class Field {
     return internal[i];
   }
 
-  List<List<Cell>> lines() {
-    return internal;
-  }
-
   int uncheckedNumbersSum() {
     var x = 0;
     for (var line in internal) {
-      for (var cell in line) {
-        if (!cell.checked) {
-          x += cell.number;
-        }
-      }
+      line.where((e) => !e.checked).map((e) => e.number).forEach((e) {
+        x += e;
+      });
     }
     return x;
   }
@@ -157,15 +136,9 @@ class Field {
   }
 
   bool hasWon() {
-    var result = "";
     // by row
     for (var line in internal) {
-      var lineWon = 0;
-      for (var cell in line) {
-        if (cell.checked) lineWon++;
-      }
-
-      if (lineWon == 5) {
+      if (line.where((cell) => cell.checked).length == 5) {
         print("lwon $line");
         return true;
       }
@@ -173,16 +146,23 @@ class Field {
 
     // by column
     for (var c = 0; c < 5; c++) {
-      var cWon = 0;
-      for (var r = 0; r < 5; r++) {
-        if (internal[r][c].checked) cWon++;
-      }
-      if (cWon == 5) {
+      if (internal.where((e) => e[c].checked).length == 5) {
         print("cwon $c");
         return true;
       }
     }
     return false;
+  }
+
+  void check(int number) {
+    for (var line in internal) {
+      for (var cell in line) {
+        if (cell.number == number) {
+          cell.checked = true;
+          return;
+        }
+      }
+    }
   }
 }
 
