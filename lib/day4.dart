@@ -18,157 +18,137 @@ class Day4 {
     return readLinesInBatches(day);
   }
 
-  int part1(List<List<String>> input) {
-    var numbers = input.first[0].split(",").map((e) => int.parse(e));
-    var fields = getFields(input);
+  int part1(List<List<String>> batches) {
+    var drawnNumbers = batches.first[0].split(",").map((e) => int.parse(e));
+    var fields = getBoards(batches);
 
-    for (var number in numbers) {
-      for (int i = 0; i < fields.length; i++) {
-        var field = fields[i];
-        checkField(field, number);
+    for (var drawnNumber in drawnNumbers) {
+      for (var field in fields) {
+        field.mark(drawnNumber);
+
         if (field.hasWon()) {
-          print("$i: ${field.uncheckedNumbersSum()} * $number");
-          return field.uncheckedNumbersSum() * number;
+          return field.unmarkedNumbersSum() * drawnNumber;
         }
       }
     }
 
-//    printFields(fields);
-
     return -1;
   }
 
-  void printFields(List<Field> fields) {
-    for (var element in fields) {
-      print(element);
-      print("");
-    }
-  }
-
-  List<Field> getFields(List<List<String>> input) {
+  List<Board> getBoards(List<List<String>> input) {
     return input
         .skip(1)
-        .map((batch) => Field(batch
+        .map((batch) => Board(batch
             .map((line) => line
                 .trim()
                 .split(RegExp("\\s+"))
-                .map((e) => Cell(int.parse(e)))
+                .map((e) => Number(int.parse(e)))
                 .toList())
             .toList()))
         .toList();
   }
 
-  int part2(List<List<String>> input) {
-    var numbers = input.first[0].split(",").map((e) => int.parse(e));
-    var fields = getFields(input);
+  int part2(List<List<String>> batches) {
+    var drawnNumbers = batches.first[0].split(",").map((e) => int.parse(e));
+    var boards = getBoards(batches);
 
-    var toWin = <int>{};
-    for (var number in numbers) {
-      for (int i = 0; i < fields.length; i++) {
-        var field = fields[i];
-        checkField(field, number);
+    var boardsWon = <Board>{};
+    for (var drawnNumbers in drawnNumbers) {
+      for (var field in boards) {
+        field.mark(drawnNumbers);
         if (field.hasWon()) {
-          toWin.add(i);
+          boardsWon.add(field);
         }
-        if (toWin.length == fields.length) {
-          print("$i: ${field.uncheckedNumbersSum()} * $number");
-          //printFields(fields);
-          return field.uncheckedNumbersSum() * number;
+
+        if (boardsWon.length == boards.length) {
+          return field.unmarkedNumbersSum() * drawnNumbers;
         }
       }
     }
 
-    //printFields(fields);
-
     return -1;
   }
 
-  void checkField(Field field, int number) {
-    field.check(number);
+  void printBoards(List<Board> boards) {
+    for (var board in boards) {
+      print(board);
+      print("");
+    }
   }
 }
 
-class Field {
-  List<List<Cell>> internal = [];
+class Board {
+  List<List<Number>> numbers = [];
 
-  Field(List<List<Cell>> input) {
-    internal = input;
+  Board(List<List<Number>> input) {
+    numbers = input;
   }
 
-  void add(List<Cell> tmp) {
-    internal.add(tmp);
-  }
-
-  List<Cell> operator [](int i) {
-    return internal[i];
-  }
-
-  int uncheckedNumbersSum() {
+  int unmarkedNumbersSum() {
     var x = 0;
-    for (var line in internal) {
-      line.where((e) => !e.checked).map((e) => e.number).forEach((e) {
+    for (var row in numbers) {
+      row.where((e) => !e.marked).map((e) => e.value).forEach((e) {
         x += e;
       });
     }
     return x;
   }
 
-  @override
-  String toString() {
-    var result = "";
-    for (var line in internal) {
-      for (var cell in line) {
-        result += "$cell".padLeft(3);
-      }
-      result += "\n";
-    }
-
-    return result;
-  }
-
   bool hasWon() {
     // by row
-    for (var line in internal) {
-      if (line.where((cell) => cell.checked).length == 5) {
-        print("lwon $line");
+    for (var row in numbers) {
+      if (row.where((number) => number.marked).length == 5) {
         return true;
       }
     }
 
     // by column
     for (var c = 0; c < 5; c++) {
-      if (internal.where((e) => e[c].checked).length == 5) {
-        print("cwon $c");
+      if (numbers.where((row) => row[c].marked).length == 5) {
         return true;
       }
     }
+
     return false;
   }
 
-  void check(int number) {
-    for (var line in internal) {
-      for (var cell in line) {
-        if (cell.number == number) {
-          cell.checked = true;
+  void mark(int drawnNumber) {
+    for (var row in numbers) {
+      for (var number in row) {
+        if (number.value == drawnNumber) {
+          number.marked = true;
           return;
         }
       }
     }
   }
-}
-
-class Cell {
-  final int number;
-  var checked = false;
-
-  Cell(this.number);
 
   @override
   String toString() {
-    if (checked) {
+    var result = "";
+    for (var row in numbers) {
+      for (var number in row) {
+        result += "$number".padLeft(3);
+      }
+      result += "\n";
+    }
+
+    return result;
+  }
+}
+
+class Number {
+  final int value;
+  var marked = false;
+
+  Number(this.value);
+
+  @override
+  String toString() {
+    if (marked) {
       return "x";
     }
 
-    return "$number";
+    return "$value";
   }
 }
