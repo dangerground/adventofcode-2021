@@ -19,7 +19,7 @@ class Day4 {
   }
 
   int part1(List<List<String>> batches) {
-    var drawnNumbers = batches.first[0].split(",").map((e) => int.parse(e));
+    var drawnNumbers = getDrawnNumbers(batches);
     var fields = getBoards(batches);
 
     for (var drawnNumber in drawnNumbers) {
@@ -35,21 +35,16 @@ class Day4 {
     return -1;
   }
 
+  Iterable<int> getDrawnNumbers(List<List<String>> batches) {
+    return batches.first[0].split(",").map((e) => int.parse(e));
+  }
+
   List<Board> getBoards(List<List<String>> input) {
-    return input
-        .skip(1)
-        .map((batch) => Board(batch
-            .map((line) => line
-                .trim()
-                .split(RegExp("\\s+"))
-                .map((e) => Number(int.parse(e)))
-                .toList())
-            .toList()))
-        .toList();
+    return input.skip(1).map((batch) => Board.fromBatch(batch)).toList();
   }
 
   int part2(List<List<String>> batches) {
-    var drawnNumbers = batches.first[0].split(",").map((e) => int.parse(e));
+    var drawnNumbers = getDrawnNumbers(batches);
     var boards = getBoards(batches);
 
     var boardsWon = <Board>{};
@@ -80,8 +75,16 @@ class Day4 {
 class Board {
   List<List<Number>> numbers = [];
 
-  Board(List<List<Number>> input) {
-    numbers = input;
+  Board.fromBatch(List<String> batch) {
+    numbers = batch.map((row) => rowToNumbers(row)).toList();
+  }
+
+  List<Number> rowToNumbers(String row) {
+    return row
+        .trim()
+        .split(RegExp("\\s+"))
+        .map((e) => Number(int.parse(e)))
+        .toList();
   }
 
   int unmarkedNumbersSum() {
