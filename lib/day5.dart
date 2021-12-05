@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:adventofcode2021/util/input.dart';
 
 import 'util/maps.dart';
@@ -22,34 +24,25 @@ class Day5 {
 
   int part1(List<String> input) {
     List<Line> lines = inputToLines(input);
-    
+
     var map = AccessMap();
-    for (var line in lines) { 
+    for (var line in lines) {
       if (line.p1.x == line.p2.x) {
         var x = line.p1.x;
-        if (line.p1.y < line.p2.y) {
-          for (var y = line.p1.y; y <= line.p2.y; y++) {
-            incMap(map, x, y);
-          }
-        } else {
-          for (var y = line.p2.y; y <= line.p1.y; y++) {
-            incMap(map, x, y);
-          }
+        var minY = min(line.p1.y, line.p2.y);
+        var maxY = max(line.p1.y, line.p2.y);
+        for (var y = minY; y <= maxY; y++) {
+          incMap(map, x, y);
         }
-      } else if (line.p1.y == line.p2.y)  {
-
+      } else if (line.p1.y == line.p2.y) {
+        var minX = min(line.p1.x, line.p2.x);
+        var maxX = max(line.p1.x, line.p2.x);
         var y = line.p1.y;
-        if (line.p1.x < line.p2.x) {
-          for (var x = line.p1.x; x <= line.p2.x; x++) {
-            incMap(map, x, y);
-          }
-        } else {
-          for (var x = line.p2.x; x <= line.p1.x; x++) {
-            incMap(map, x, y);
-          }
+        for (var x = minX; x <= maxX; x++) {
+          incMap(map, x, y);
         }
       } else {
-        //print("ignore $line");
+        // ignore for part1
       }
     }
 
@@ -58,7 +51,7 @@ class Day5 {
     print("check");
 
     var hasMinTwo = 0;
-    for(var y = 0; y < map.height; y++) {
+    for (var y = 0; y < map.height; y++) {
       for (var x = 0; x < map.width; x++) {
         var entry = map.get(x, y) ?? 0;
         if (entry > 1) {
@@ -79,10 +72,10 @@ class Day5 {
     var lines = <Line>[];
     for (String lineSr in input) {
       var points = lineSr.split(" -> ");
-    
+
       var point1 = points[0].split(",").map((e) => int.parse(e)).toList();
       var point2 = points[1].split(",").map((e) => int.parse(e)).toList();
-    
+
       var line = Line(Point(point1[0], point1[1]), Point(point2[0], point2[1]));
       lines.add(line);
     }
@@ -90,10 +83,55 @@ class Day5 {
   }
 
   int part2(List<String> input) {
-    return -1;
+    List<Line> lines = inputToLines(input);
+
+    var map = AccessMap();
+    for (var line in lines) {
+      if (line.p1.x == line.p2.x) {
+        var x = line.p1.x;
+        var minY = min(line.p1.y, line.p2.y);
+        var maxY = max(line.p1.y, line.p2.y);
+        for (var y = minY; y <= maxY; y++) {
+          incMap(map, x, y);
+        }
+      } else if (line.p1.y == line.p2.y) {
+        var minX = min(line.p1.x, line.p2.x);
+        var maxX = max(line.p1.x, line.p2.x);
+        var y = line.p1.y;
+        for (var x = minX; x <= maxX; x++) {
+          incMap(map, x, y);
+        }
+      } else {
+        var xDiff =(line.p2.x - line.p1.x) / (line.p2.x - line.p1.x).abs();
+        var yDiff =(line.p2.y - line.p1.y) / (line.p2.y - line.p1.y).abs();
+        var length = (line.p1.x - line.p2.x).abs();
+        for (var i = 0; i <= length; i++) {
+
+          var x = line.p1.x + i*xDiff;
+          var y = line.p1.y + i*yDiff;
+          incMap(map, x.toInt(), y.toInt());
+        }
+        // ignore for part1
+        print("ignore $line");
+      }
+    }
+//    print(map);
+
+    print("check");
+
+    var hasMinTwo = 0;
+    for (var y = 0; y < map.height; y++) {
+      for (var x = 0; x < map.width; x++) {
+        var entry = map.get(x, y) ?? 0;
+        if (entry > 1) {
+          hasMinTwo++;
+        }
+      }
+    }
+
+    return hasMinTwo;
   }
 }
-
 
 class Point {
   final int x;
