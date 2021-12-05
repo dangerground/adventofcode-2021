@@ -27,40 +27,24 @@ class Day5 {
 
     var map = AccessMap();
     for (var line in lines) {
-      if (line.p1.x == line.p2.x) {
-        var x = line.p1.x;
-        var minY = min(line.p1.y, line.p2.y);
-        var maxY = max(line.p1.y, line.p2.y);
-        for (var y = minY; y <= maxY; y++) {
-          incMap(map, x, y);
-        }
-      } else if (line.p1.y == line.p2.y) {
-        var minX = min(line.p1.x, line.p2.x);
-        var maxX = max(line.p1.x, line.p2.x);
-        var y = line.p1.y;
-        for (var x = minX; x <= maxX; x++) {
-          incMap(map, x, y);
-        }
-      } else {
-        // ignore for part1
+      if (line.p1.x == line.p2.x
+          ||  line.p1.y == line.p2.y) {
+        drawLine(line, map);
       }
     }
 
-//    print(map);
+    return hasMinTwo(map);
+  }
 
-    print("check");
+  int part2(List<String> input) {
+    List<Line> lines = inputToLines(input);
 
-    var hasMinTwo = 0;
-    for (var y = 0; y < map.height; y++) {
-      for (var x = 0; x < map.width; x++) {
-        var entry = map.get(x, y) ?? 0;
-        if (entry > 1) {
-          hasMinTwo++;
-        }
-      }
+    var map = AccessMap();
+    for (var line in lines) {
+      drawLine(line, map);
     }
 
-    return hasMinTwo;
+    return hasMinTwo(map);
   }
 
   void incMap(AccessMap map, int x, int y) {
@@ -82,43 +66,19 @@ class Day5 {
     return lines;
   }
 
-  int part2(List<String> input) {
-    List<Line> lines = inputToLines(input);
-
-    var map = AccessMap();
-    for (var line in lines) {
-      if (line.p1.x == line.p2.x) {
-        var x = line.p1.x;
-        var minY = min(line.p1.y, line.p2.y);
-        var maxY = max(line.p1.y, line.p2.y);
-        for (var y = minY; y <= maxY; y++) {
-          incMap(map, x, y);
-        }
-      } else if (line.p1.y == line.p2.y) {
-        var minX = min(line.p1.x, line.p2.x);
-        var maxX = max(line.p1.x, line.p2.x);
-        var y = line.p1.y;
-        for (var x = minX; x <= maxX; x++) {
-          incMap(map, x, y);
-        }
-      } else {
-        var xDiff =(line.p2.x - line.p1.x) / (line.p2.x - line.p1.x).abs();
-        var yDiff =(line.p2.y - line.p1.y) / (line.p2.y - line.p1.y).abs();
-        var length = (line.p1.x - line.p2.x).abs();
-        for (var i = 0; i <= length; i++) {
-
-          var x = line.p1.x + i*xDiff;
-          var y = line.p1.y + i*yDiff;
-          incMap(map, x.toInt(), y.toInt());
-        }
-        // ignore for part1
-        print("ignore $line");
-      }
+  void drawLine(Line line, AccessMap map) {
+    var xDiff = normalizedDiff(line.p1.x, line.p2.x);
+    var yDiff = normalizedDiff(line.p1.y, line.p2.y);
+    var length =
+        max((line.p1.x - line.p2.x).abs(), (line.p1.y - line.p2.y).abs());
+    for (var i = 0; i <= length; i++) {
+      var x = line.p1.x + i * xDiff;
+      var y = line.p1.y + i * yDiff;
+      incMap(map, x.toInt(), y.toInt());
     }
-//    print(map);
+  }
 
-    print("check");
-
+  int hasMinTwo(AccessMap map) {
     var hasMinTwo = 0;
     for (var y = 0; y < map.height; y++) {
       for (var x = 0; x < map.width; x++) {
@@ -128,16 +88,13 @@ class Day5 {
         }
       }
     }
-
     return hasMinTwo;
   }
-}
 
-class Point {
-  final int x;
-  final int y;
-
-  Point(this.x, this.y);
+  double normalizedDiff(var x1, var x2) {
+    if (x2 - x1 == 0) return 0;
+    return (x2 - x1) / (x2 - x1).abs();
+  }
 }
 
 class Line {
