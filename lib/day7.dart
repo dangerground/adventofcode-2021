@@ -1,5 +1,8 @@
 import 'package:adventofcode2021/util/input.dart';
 
+import 'util/range.dart';
+import 'util/int_iterable.dart';
+
 void main() {
   final task = Day7();
 
@@ -20,86 +23,32 @@ class Day7 {
 
   int part1(List<String> input) {
     var positions = input[0].split(",").map((e) => int.parse(e)).toList();
+    var maxPos = positions.max();
 
-    var bestFuelRequired = -1;
-
-    var bestPosition = averagePosition(positions);
-    var fuelRequired = -1;
-    do {
-      fuelRequired = calcFuelSimple(fuelRequired, positions, bestPosition);
-
-      print(fuelRequired);
-
-      if (fuelRequired < bestFuelRequired || bestFuelRequired == -1) {
-        bestFuelRequired = fuelRequired;
-      } else {
-        break;
-      }
-
-      bestPosition++;
-    } while (true);
-
-
-    bestPosition = averagePosition(positions) - 1;
-    do {
-      fuelRequired = calcFuelSimple(fuelRequired, positions, bestPosition);
-
-      if (fuelRequired < bestFuelRequired || bestFuelRequired == -1) {
-        bestFuelRequired = fuelRequired;
-      } else {
-        break;
-      }
-
-      bestPosition--;
-    } while (true);
-
-    return bestFuelRequired;
+    return range(0, maxPos)
+        .map((pos) => calcFuelSimple(positions, pos))
+        .min();
   }
 
-  int calcFuelSimple(int fuelRequired, List<int> positions, int bestPosition) {
-    fuelRequired = positions.map((e) => (bestPosition - e).abs()).reduce((value, element) => value + element);
-    return fuelRequired;
+  int calcFuelSimple(List<int> positions, int bestPosition) {
+    return positions
+        .map((e) => (bestPosition - e).abs())
+        .sum();
   }
-
-  int averagePosition(List<int> positions) => positions.reduce((acc, v) => acc +  v) ~/ positions.length;
 
   int part2(List<String> input) {
-
     var positions = input[0].split(",").map((e) => int.parse(e)).toList();
+    var maxPos = positions.max();
 
-    var bestPosition = 0;
-    var bestFuelRequired = -1;
+    return range(0, maxPos)
+        .map((pos) => calcFuelForCrabs(positions, pos))
+        .min();
+  }
 
-    bestPosition = averagePosition(positions);
-    var fuelRequired = -1;
-    do {
-      fuelRequired = positions.map((e) => (bestPosition - e).abs()).map((e) => (e * (e+1))~/2).reduce((value, element) => value + element);
-
-      print(fuelRequired);
-
-      if (fuelRequired < bestFuelRequired || bestFuelRequired == -1) {
-        bestFuelRequired = fuelRequired;
-      } else {
-        break;
-      }
-
-      bestPosition++;
-    } while (true);
-
-
-    bestPosition = averagePosition(positions) - 1;
-    do {
-      fuelRequired = positions.map((e) => (bestPosition - e).abs()).map((e) => (e * (e+1))~/2).reduce((value, element) => value + element);
-
-      if (fuelRequired < bestFuelRequired || bestFuelRequired == -1) {
-        bestFuelRequired = fuelRequired;
-      } else {
-        break;
-      }
-
-      bestPosition--;
-    } while (true);
-
-    return bestFuelRequired;
+  int calcFuelForCrabs(List<int> positions, int bestPosition) {
+    return positions
+        .map((e) => (bestPosition - e).abs())
+        .map((e) => (e * (e + 1)) ~/ 2)
+        .sum();
   }
 }
