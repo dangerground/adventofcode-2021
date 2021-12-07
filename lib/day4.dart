@@ -36,7 +36,7 @@ class Day4 {
   }
 
   Iterable<int> getDrawnNumbers(List<List<String>> batches) {
-    return batches.first[0].split(",").map((e) => int.parse(e));
+    return batches.first[0].toIntList();
   }
 
   List<Board> getBoards(List<List<String>> input) {

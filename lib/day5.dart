@@ -57,8 +57,8 @@ class Day5 {
     for (String lineSr in input) {
       var points = lineSr.split(" -> ");
 
-      var point1 = points[0].split(",").map((e) => int.parse(e)).toList();
-      var point2 = points[1].split(",").map((e) => int.parse(e)).toList();
+      var point1 = points[0].toIntList();
+      var point2 = points[1].toIntList();
 
       var line = Line(Point(point1[0], point1[1]), Point(point2[0], point2[1]));
       lines.add(line);

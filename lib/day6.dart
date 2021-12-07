@@ -20,7 +20,7 @@ class Day6 {
 
   int part1(List<String> input) {
 
-    var fishes = input[0].split(",").map((e) => int.parse(e)).toList(growable: true);
+    var fishes = input[0].toIntList();
 
     for (int i = 0; i < 80; i++) {
       var newFishes = <int>[];
@@ -43,7 +43,7 @@ class Day6 {
   }
 
   int part2(List<String> input) {
-    var fishes = input[0].split(",").map((e) => int.parse(e)).toList(growable: true);
+    var fishes = input[0].toIntList();
 
 
     var incMap = {

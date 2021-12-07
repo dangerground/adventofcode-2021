@@ -28,3 +28,7 @@ List<List<String>> readLinesInBatches(int day) {
 
   return batches;
 }
+
+extension StringToInt on String {
+  List<int> toIntList() => split(",").map(int.parse).toList();
+}

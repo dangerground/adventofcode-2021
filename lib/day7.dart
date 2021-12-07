@@ -22,7 +22,7 @@ class Day7 {
   }
 
   int part1(List<String> input) {
-    var positions = input[0].split(",").map((e) => int.parse(e)).toList();
+    var positions = input[0].toIntList();
     var maxPos = positions.max();
 
     return range(0, maxPos)
@@ -37,7 +37,7 @@ class Day7 {
   }
 
   int part2(List<String> input) {
-    var positions = input[0].split(",").map((e) => int.parse(e)).toList();
+    var positions = input[0].toIntList();
     var maxPos = positions.max();
 
     return range(0, maxPos)
