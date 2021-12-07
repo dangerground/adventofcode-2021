@@ -27,8 +27,7 @@ class Day5 {
 
     var map = AccessMap();
     for (var line in lines) {
-      if (line.p1.x == line.p2.x
-          ||  line.p1.y == line.p2.y) {
+      if (line.p1.x == line.p2.x || line.p1.y == line.p2.y) {
         drawLine(line, map);
       }
     }

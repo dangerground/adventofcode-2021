@@ -13,6 +13,7 @@ void main() {
 }
 
 typedef Bit = int;
+
 extension BitTogglee on Bit {
   int toggle() {
     if (this < 0 || this > 1) throw 'Unsupported Number';

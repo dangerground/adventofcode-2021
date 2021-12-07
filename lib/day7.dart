@@ -25,15 +25,11 @@ class Day7 {
     var positions = input[0].toIntList();
     var maxPos = positions.max();
 
-    return range(0, maxPos)
-        .map((pos) => calcFuelSimple(positions, pos))
-        .min();
+    return range(0, maxPos).map((pos) => calcFuelSimple(positions, pos)).min();
   }
 
   int calcFuelSimple(List<int> positions, int bestPosition) {
-    return positions
-        .map((e) => (bestPosition - e).abs())
-        .sum();
+    return positions.map((e) => (bestPosition - e).abs()).sum();
   }
 
   int part2(List<String> input) {

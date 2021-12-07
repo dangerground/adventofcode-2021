@@ -28,7 +28,7 @@ class AccessMap {
     if (x + 1 > _width) _width = x + 1;
     if (y + 1 > _height) _height = y + 1;
 
-    if  (content[y] == null) {
+    if (content[y] == null) {
       content[y] = <int, int>{};
       content[y]![x] = entry;
     }
@@ -43,7 +43,7 @@ class AccessMap {
   @override
   String toString() {
     var result = "";
-    for(var y = 0; y < _height; y++) {
+    for (var y = 0; y < _height; y++) {
       for (var x = 0; x < _width; x++) {
         var entry = get(x, y) ?? ".";
         result += "$entry";

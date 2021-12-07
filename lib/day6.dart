@@ -19,7 +19,6 @@ class Day6 {
   }
 
   int part1(List<String> input) {
-
     var fishes = input[0].toIntList();
 
     for (int i = 0; i < 80; i++) {
@@ -36,7 +35,6 @@ class Day6 {
       }
 
       fishes.addAll(newFishes);
-
     }
 
     return fishes.length;
@@ -44,7 +42,6 @@ class Day6 {
 
   int part2(List<String> input) {
     var fishes = input[0].toIntList();
-
 
     var incMap = {
       0: fishes.where((element) => element == 0).length,
@@ -58,10 +55,8 @@ class Day6 {
       8: fishes.where((element) => element == 8).length,
     };
 
-
     //print(incMap);
     for (int i = 0; i < 256; i++) {
-
       var newMap = {
         0: incMap[1]!,
         1: incMap[2]!,
@@ -79,6 +74,8 @@ class Day6 {
 //      print(incMap);
     }
 
-    return incMap.entries.map((e) => e.value).reduce((value, element) => value + element);
+    return incMap.entries
+        .map((e) => e.value)
+        .reduce((value, element) => value + element);
   }
 }
