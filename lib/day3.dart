@@ -2,11 +2,9 @@ import 'package:adventofcode2021/util/input.dart';
 import 'package:quantity/number.dart';
 
 void main() {
-  final task = Day3();
-
-  final input = task.input();
-  final solution1 = task.part1(input);
-  final solution2 = task.part2(input);
+  final input = readLinesAsString(3);
+  final solution1 = part1(input);
+  final solution2 = part2(input);
 
   print("Solution part1: [ $solution1 ]");
   print("Solution part2: [ $solution2 ]");
@@ -21,53 +19,45 @@ extension BitTogglee on Bit {
   }
 }
 
-class Day3 {
-  static const int day = 3;
+int part1(List<String> input) {
+  var gamma = "";
+  var epsilon = "";
+  for (var pos = 0; pos < input.first.length; pos++) {
+    var commonBit = mostCommonBit(input, pos);
+    var uncommonBit = commonBit.toggle();
 
-  List<String> input() {
-    return readLinesAsString(day);
+    gamma = "$gamma$commonBit";
+    epsilon = "$epsilon$uncommonBit";
   }
 
-  int part1(List<String> input) {
-    var gamma = "";
-    var epsilon = "";
-    for (var pos = 0; pos < input.first.length; pos++) {
-      var commonBit = mostCommonBit(input, pos);
-      var uncommonBit = commonBit.toggle();
+  var powerConsumption = Binary(gamma).value * Binary(epsilon).value;
+  return powerConsumption;
+}
 
-      gamma = "$gamma$commonBit";
-      epsilon = "$epsilon$uncommonBit";
-    }
+Bit mostCommonBit(List<String> input, bit) {
+  var numOfOnes =
+      input.map((e) => e[bit]).where((element) => element == "1").length;
 
-    var powerConsumption = Binary(gamma).value * Binary(epsilon).value;
-    return powerConsumption;
+  if (numOfOnes >= input.length - numOfOnes) {
+    return 1;
   }
 
-  Bit mostCommonBit(List<String> input, bit) {
-    var numOfOnes =
-        input.map((e) => e[bit]).where((element) => element == "1").length;
+  return 0;
+}
 
-    if (numOfOnes >= input.length - numOfOnes) {
-      return 1;
-    }
+int part2(List<String> input) {
+  var oxygenGenerator = reduceBy(input, (l, p) => mostCommonBit(l, p));
+  var co2Scrubber = reduceBy(input, (l, p) => mostCommonBit(l, p).toggle());
 
-    return 0;
+  return co2Scrubber * oxygenGenerator;
+}
+
+int reduceBy(List<String> input, Function(List<String>, int) fun) {
+  var remaining = input;
+  for (var pos = 0; remaining.length > 1; pos++) {
+    var common = fun(remaining, pos);
+    remaining = remaining.where((e) => e[pos] == "$common").toList();
   }
 
-  int part2(List<String> input) {
-    var oxygenGenerator = reduceBy(input, (l, p) => mostCommonBit(l, p));
-    var co2Scrubber = reduceBy(input, (l, p) => mostCommonBit(l, p).toggle());
-
-    return co2Scrubber * oxygenGenerator;
-  }
-
-  int reduceBy(List<String> input, Function(List<String>, int) fun) {
-    var remaining = input;
-    for (var pos = 0; remaining.length > 1; pos++) {
-      var common = fun(remaining, pos);
-      remaining = remaining.where((e) => e[pos] == "$common").toList();
-    }
-
-    return Binary(remaining.first).value;
-  }
+  return Binary(remaining.first).value;
 }

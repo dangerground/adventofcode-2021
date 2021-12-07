@@ -2,8 +2,6 @@ import 'package:adventofcode2021/day6.dart';
 import 'package:test/test.dart';
 
 void main() {
-  final task = Day6();
-
   final input = [
     '3,4,3,1,2',
   ];
@@ -11,7 +9,7 @@ void main() {
   group("part1", () {
     test('given example', () {
       // when
-      final result = task.part1(input);
+      final result = part1(input);
 
       // then
       expect(result, equals(5934));
@@ -21,7 +19,7 @@ void main() {
   group("part2", () {
     test('given example', () {
       // when
-      final result = task.part2(input);
+      final result = part2(input);
 
       // then
       expect(result, equals(26984457539));
