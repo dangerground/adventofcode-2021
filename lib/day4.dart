@@ -76,7 +76,7 @@ class Board {
   List<List<Number>> numbers = [];
 
   Board.fromBatch(List<String> batch) {
-    numbers = batch.map((row) => rowToNumbers(row)).toList();
+    numbers = batch.map(rowToNumbers).toList();
   }
 
   List<Number> rowToNumbers(String row) {

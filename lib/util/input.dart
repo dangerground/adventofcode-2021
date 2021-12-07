@@ -6,7 +6,7 @@ List<String> readLinesAsString(int day) {
 }
 
 List<int> readLinesAsInt(int day) =>
-    readLinesAsString(day).map((e) => int.parse(e)).toList();
+    readLinesAsString(day).map(int.parse).toList();
 
 String _dayToPath(int day) => "./assets/input/input_day$day.txt";
 
