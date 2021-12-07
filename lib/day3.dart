@@ -3,11 +3,9 @@ import 'package:quantity/number.dart';
 
 void main() {
   final input = readLinesAsString(3);
-  final solution1 = part1(input);
-  final solution2 = part2(input);
 
-  print("Solution part1: [ $solution1 ]");
-  print("Solution part2: [ $solution2 ]");
+  print("Solution part1: [ ${part1(input)} ]");
+  print("Solution part2: [ ${part2(input)} ]");
 }
 
 typedef Bit = int;
