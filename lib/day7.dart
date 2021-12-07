@@ -21,15 +21,12 @@ class Day7 {
   int part1(List<String> input) {
     var positions = input[0].split(",").map((e) => int.parse(e)).toList();
 
-    var bestPosition = 0;
     var bestFuelRequired = -1;
 
-    var averagePosition = positions.reduce((acc, v) => acc +  v) ~/ positions.length;
-
-    bestPosition = averagePosition;
+    var bestPosition = averagePosition(positions);
     var fuelRequired = -1;
     do {
-      fuelRequired = positions.map((e) => (bestPosition - e).abs()).reduce((value, element) => value + element);
+      fuelRequired = calcFuelSimple(fuelRequired, positions, bestPosition);
 
       print(fuelRequired);
 
@@ -43,9 +40,9 @@ class Day7 {
     } while (true);
 
 
-    bestPosition = averagePosition - 1;
+    bestPosition = averagePosition(positions) - 1;
     do {
-      fuelRequired = positions.map((e) => (bestPosition - e).abs()).reduce((value, element) => value + element);
+      fuelRequired = calcFuelSimple(fuelRequired, positions, bestPosition);
 
       if (fuelRequired < bestFuelRequired || bestFuelRequired == -1) {
         bestFuelRequired = fuelRequired;
@@ -59,7 +56,50 @@ class Day7 {
     return bestFuelRequired;
   }
 
+  int calcFuelSimple(int fuelRequired, List<int> positions, int bestPosition) {
+    fuelRequired = positions.map((e) => (bestPosition - e).abs()).reduce((value, element) => value + element);
+    return fuelRequired;
+  }
+
+  int averagePosition(List<int> positions) => positions.reduce((acc, v) => acc +  v) ~/ positions.length;
+
   int part2(List<String> input) {
-    return -1;
+
+    var positions = input[0].split(",").map((e) => int.parse(e)).toList();
+
+    var bestPosition = 0;
+    var bestFuelRequired = -1;
+
+    bestPosition = averagePosition(positions);
+    var fuelRequired = -1;
+    do {
+      fuelRequired = positions.map((e) => (bestPosition - e).abs()).map((e) => (e * (e+1))~/2).reduce((value, element) => value + element);
+
+      print(fuelRequired);
+
+      if (fuelRequired < bestFuelRequired || bestFuelRequired == -1) {
+        bestFuelRequired = fuelRequired;
+      } else {
+        break;
+      }
+
+      bestPosition++;
+    } while (true);
+
+
+    bestPosition = averagePosition(positions) - 1;
+    do {
+      fuelRequired = positions.map((e) => (bestPosition - e).abs()).map((e) => (e * (e+1))~/2).reduce((value, element) => value + element);
+
+      if (fuelRequired < bestFuelRequired || bestFuelRequired == -1) {
+        bestFuelRequired = fuelRequired;
+      } else {
+        break;
+      }
+
+      bestPosition--;
+    } while (true);
+
+    return bestFuelRequired;
   }
 }
