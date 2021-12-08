@@ -3,7 +3,7 @@ description: Just having some fun
 version: 1.0.0
 
 environment:
-  sdk: '>=2.14.4 <3.0.0'
+  sdk: '>=2.14.2 <3.0.0'
 
 
 dependencies:

@@ -28,13 +28,25 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
   });
 
   group("part2", () {
+    test('simple example', () {
+      // given
+      var simple =
+      '''acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf'''
+          .split("\n")
+          .toList();
 
+      // when
+      final result = part2(simple);
+
+      // then
+      expect(result, equals(5353));
+    });
     test('given example', () {
       // when
       final result = part2(input);
 
       // then
-      expect(result, equals(666));
+      expect(result, equals(61229));
     });
   });
 }
