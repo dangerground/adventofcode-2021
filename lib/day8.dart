@@ -15,23 +15,16 @@ int part1(List<String> input) {
   for (var line in outputs) {
     for (var element in line) {
       var num = -1;
-      if (element.length ==
-          2 /* && element.contains("c") && element.contains("f")*/) {
-        // 1
+      if (element.length == 2) {
         num = 1;
       }
-      if (element.length ==
-          4 /* && element.contains("e") && element.contains("a") && element.contains("f") && element.contains("b")*/) {
-        // 4
+      if (element.length == 4) {
         num = 4;
       }
-      if (element.length ==
-          3 /* && element.contains("a") && element.contains("c") && element.contains("f")*/) {
-        // 7
+      if (element.length == 3) {
         num = 7;
       }
       if (element.length == 7) {
-        // 8
         num = 8;
       }
       if (num > -1) {
