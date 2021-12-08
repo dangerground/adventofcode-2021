@@ -1,5 +1,6 @@
+import 'package:collection/collection.dart';
+
 import 'package:adventofcode2021/util/input.dart';
-import 'package:adventofcode2021/util/int_iterable.dart';
 
 void main() {
   final input = readLinesAsString(8);
@@ -51,18 +52,7 @@ int part2(List<String> input) {
     var inputs = pattern[0].toList();
     var outputs = pattern[1];
 
-    var nums = {
-      0: <String>{},
-      1: <String>{},
-      2: <String>{},
-      3: <String>{},
-      4: <String>{},
-      5: <String>{},
-      6: <String>{},
-      7: <String>{},
-      8: <String>{},
-      9: <String>{},
-    };
+    var nums = Iterable.generate(10).map((e) => <String>{}).toList();
 
     var change = false;
     var nextInput = <String>[];
@@ -73,32 +63,32 @@ int part2(List<String> input) {
       for (var element in nextInput) {
         var num = determineNumber(element, nums);
         if (num > 0) {
-          nums[num]!.addAll(element.chars());
+          nums[num] = element.chars().toSet();
           change = true;
           inputs.remove(element);
         }
       }
-
     } while (inputs.isNotEmpty && change);
-    nums[0]!.addAll(inputs.first.chars());
+    nums[0].addAll(inputs.first.chars());
 
     var outputValue = "";
     for (var output in outputs) {
-      nums.forEach((num, wires) {
-        if (wires.length == output.length) {
-          if (wires.containsAll(output.chars())) {
-            outputValue += "$num";
-          }
+      for (var num = 0; num < 10; num++) {
+        var wires = nums[num].sorted((a, b) => a.compareTo(b));
+        var check = output.chars().toSet().sorted((a, b) => a.compareTo(b));
+        if (IterableEquality().equals(wires, check)) {
+          outputValue += "$num";
+          break;
         }
-      });
+      }
     }
     outputValues.add(int.parse(outputValue));
   }
 
-  return outputValues.sum();
+  return outputValues.sum;
 }
 
-int determineNumber(String element, Map<int, Set<String>> nums) {
+int determineNumber(String element, List<Set<String>> nums) {
   if (element.length == 2) {
     return 1;
   } else if (element.length == 3) {
@@ -109,10 +99,10 @@ int determineNumber(String element, Map<int, Set<String>> nums) {
     return 8;
   } else if (element.length == 5) {
     // 2 | 3 | 5
-    if (nums[7]!.isNotEmpty && element.containsAll(nums[7]!)) {
+    if (nums[7].isNotEmpty && element.containsAll(nums[7])) {
       return 3;
-    } else if (nums[3]!.isNotEmpty && nums[9]!.isNotEmpty) {
-      var possible = nums[9]!.toList();
+    } else if (nums[3].isNotEmpty && nums[9].isNotEmpty) {
+      var possible = nums[9].toList();
       element.chars().forEach((e) {
         possible.remove(e);
       });
@@ -126,17 +116,17 @@ int determineNumber(String element, Map<int, Set<String>> nums) {
   } else if (element.length == 6) {
     // 0 | 6 | 9
 
-    if (nums[3]!.isNotEmpty &&
-        nums[4]!.isNotEmpty &&
-        element.containsAll(nums[3]!) &&
-        element.containsAll(nums[4]!)) {
+    if (nums[3].isNotEmpty &&
+        nums[4].isNotEmpty &&
+        element.containsAll(nums[3]) &&
+        element.containsAll(nums[4])) {
       return 9;
-    } else if (nums[8]!.isNotEmpty && nums[1]!.isNotEmpty) {
-      var possible = nums[8]!.toList();
+    } else if (nums[8].isNotEmpty && nums[1].isNotEmpty) {
+      var possible = nums[8].toList();
       element.chars().forEach((e) {
         possible.remove(e);
       });
-      if (possible.length == 1 && nums[1]!.contains(possible.first)) {
+      if (possible.length == 1 && nums[1].contains(possible.first)) {
         return 6;
       } else {
         return 0;

@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import 'package:adventofcode2021/util/input.dart';
 
 import 'util/range.dart';
@@ -18,7 +20,7 @@ int part1(List<String> input) {
 }
 
 int calcFuelSimple(List<int> positions, int bestPosition) {
-  return positions.map((e) => (bestPosition - e).abs()).sum();
+  return positions.map((e) => (bestPosition - e).abs()).sum;
 }
 
 int part2(List<String> input) {
@@ -32,5 +34,6 @@ int calcFuelForCrabs(List<int> positions, int bestPosition) {
   return positions
       .map((e) => (bestPosition - e).abs())
       .map((e) => (e * (e + 1)) ~/ 2)
-      .sum();
+      .toList()
+      .sum;
 }
