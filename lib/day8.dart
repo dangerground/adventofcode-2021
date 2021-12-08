@@ -14,21 +14,7 @@ int part1(List<String> input) {
   var count = 0;
   for (var line in outputs) {
     for (var element in line) {
-      var num = -1;
-      if (element.length == 2) {
-        num = 1;
-      }
-      if (element.length == 4) {
-        num = 4;
-      }
-      if (element.length == 3) {
-        num = 7;
-      }
-      if (element.length == 7) {
-        num = 8;
-      }
-      if (num > -1) {
-        num = -1;
+      if ([2, 3, 4, 7].contains(element.length)) {
         count++;
       }
     }
