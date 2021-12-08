@@ -25,32 +25,32 @@ int part2(List<String> input) {
     var inputs = pattern[0].toList();
     var outputs = pattern[1];
 
-    List<Set<String>> nums = getNumberMappings(inputs);
-    outputValues.add(patternsToOutputValue(outputs, nums));
+    List<Set<String>> numbers = getNumberMappings(inputs);
+    outputValues.add(patternsToOutputValue(outputs, numbers));
   }
 
   return outputValues.sum;
 }
 
-List<Set<String>> getNumberMappings(List<String> inputs) {
+List<Set<String>> getNumberMappings(List<String> remainingSignals) {
   var nums = Iterable.generate(10).map((e) => <String>{}).toList();
 
   var change = false;
   var nextInput = <String>[];
   do {
-    nextInput = inputs.toList();
+    nextInput = remainingSignals.toList();
     change = false;
 
-    for (var element in nextInput) {
-      var num = determineNumber(element, nums);
+    for (var signal in nextInput) {
+      var num = determineNumber(signal, nums);
       if (num > 0) {
-        nums[num] = element.chars().toSet();
+        nums[num] = signal.chars().toSet();
         change = true;
-        inputs.remove(element);
+        remainingSignals.remove(signal);
       }
     }
-  } while (inputs.isNotEmpty && change);
-  nums[0].addAll(inputs.first.chars());
+  } while (remainingSignals.isNotEmpty && change);
+  nums[0].addAll(remainingSignals.first.chars());
   return nums;
 }
 
