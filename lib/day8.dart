@@ -11,16 +11,10 @@ void main() {
 
 int part1(List<String> input) {
   var outputs = input.map((e) => e.split(" | ")[1].split(" "));
-  var count = 0;
-  for (var line in outputs) {
-    for (var element in line) {
-      if ([2, 3, 4, 7].contains(element.length)) {
-        count++;
-      }
-    }
-  }
-  return count;
+  return outputs.map((line) => line.where(isUnique).length).sum;
 }
+
+bool isUnique(String element) => [2, 3, 4, 7].contains(element.length);
 
 int part2(List<String> input) {
   var patterns =
