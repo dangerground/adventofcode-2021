@@ -78,44 +78,73 @@ int determineNumber(String element, List<Set<String>> nums) {
     return 4;
   } else if (element.length == 7) {
     return 8;
-  } else if (element.length == 5) {
-    // 2 | 3 | 5
-    if (nums[7].isNotEmpty && element.containsAll(nums[7])) {
-      return 3;
-    } else if (nums[3].isNotEmpty && nums[9].isNotEmpty) {
-      var possible = nums[9].toList();
-      element.chars().forEach((e) {
-        possible.remove(e);
-      });
-
-      if (possible.length == 1) {
-        return 5;
-      } else {
-        return 2;
-      }
+  } else if (isSeven(nums, element)) {
+    return 3;
+  } else if (isTwoOrFive(nums, element)) {
+    if (isFive(nums, element)) {
+      return 5;
+    } else {
+      return 2;
     }
-  } else if (element.length == 6) {
-    // 0 | 6 | 9
-
-    if (nums[3].isNotEmpty &&
-        nums[4].isNotEmpty &&
-        element.containsAll(nums[3]) &&
-        element.containsAll(nums[4])) {
-      return 9;
-    } else if (nums[8].isNotEmpty && nums[1].isNotEmpty) {
-      var possible = nums[8].toList();
-      element.chars().forEach((e) {
-        possible.remove(e);
-      });
-      if (possible.length == 1 && nums[1].contains(possible.first)) {
-        return 6;
-      } else {
-        return 0;
-      }
+  } else if (isNine(nums, element)) {
+    return 9;
+  } else if (isSixOrZero(nums)) {
+    if (isSix(nums, element)) {
+      return 6;
+    } else {
+      return 0;
     }
   }
 
   return -1;
+}
+
+bool isSix(List<Set<String>> nums, String element) {
+  var possible = nums[8].toList();
+  element.chars().forEach((e) {
+    possible.remove(e);
+  });
+  return possible.length == 1 && nums[1].contains(possible.first);
+}
+
+bool isSixOrZero(List<Set<String>> nums) {
+  return nums[8].isNotEmpty && nums[1].isNotEmpty;
+}
+
+bool isFive(List<Set<String>> nums, String element) {
+  var possible = nums[9].toList();
+  element.chars().forEach((e) {
+    possible.remove(e);
+  });
+
+  return possible.length == 1;
+}
+
+bool isTwoOrFive(List<Set<String>> nums, String element) {
+  if (element.length != 5) {
+    return false;
+  }
+
+  return nums[3].isNotEmpty && nums[9].isNotEmpty;
+}
+
+bool isSeven(List<Set<String>> nums, String element) {
+  if (element.length != 5) {
+    return false;
+  }
+
+  return nums[7].isNotEmpty && element.containsAll(nums[7]);
+}
+
+bool isNine(List<Set<String>> nums, String element) {
+  if (element.length != 6) {
+    return false;
+  }
+
+  return nums[3].isNotEmpty &&
+      nums[4].isNotEmpty &&
+      element.containsAll(nums[3]) &&
+      element.containsAll(nums[4]);
 }
 
 extension StringContainsAll on String {
