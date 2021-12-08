@@ -25,40 +25,48 @@ int part2(List<String> input) {
     var inputs = pattern[0].toList();
     var outputs = pattern[1];
 
-    var nums = Iterable.generate(10).map((e) => <String>{}).toList();
-
-    var change = false;
-    var nextInput = <String>[];
-    do {
-      nextInput = inputs.toList();
-      change = false;
-
-      for (var element in nextInput) {
-        var num = determineNumber(element, nums);
-        if (num > 0) {
-          nums[num] = element.chars().toSet();
-          change = true;
-          inputs.remove(element);
-        }
-      }
-    } while (inputs.isNotEmpty && change);
-    nums[0].addAll(inputs.first.chars());
-
-    var outputValue = "";
-    for (var output in outputs) {
-      for (var num = 0; num < 10; num++) {
-        var wires = nums[num].sorted((a, b) => a.compareTo(b));
-        var check = output.chars().toSet().sorted((a, b) => a.compareTo(b));
-        if (IterableEquality().equals(wires, check)) {
-          outputValue += "$num";
-          break;
-        }
-      }
-    }
-    outputValues.add(int.parse(outputValue));
+    List<Set<String>> nums = getNumberMappings(inputs);
+    outputValues.add(patternsToOutputValue(outputs, nums));
   }
 
   return outputValues.sum;
+}
+
+List<Set<String>> getNumberMappings(List<String> inputs) {
+  var nums = Iterable.generate(10).map((e) => <String>{}).toList();
+
+  var change = false;
+  var nextInput = <String>[];
+  do {
+    nextInput = inputs.toList();
+    change = false;
+
+    for (var element in nextInput) {
+      var num = determineNumber(element, nums);
+      if (num > 0) {
+        nums[num] = element.chars().toSet();
+        change = true;
+        inputs.remove(element);
+      }
+    }
+  } while (inputs.isNotEmpty && change);
+  nums[0].addAll(inputs.first.chars());
+  return nums;
+}
+
+int patternsToOutputValue(List<String> outputs, List<Set<String>> nums) {
+  var outputValue = "";
+  for (var output in outputs) {
+    for (var num = 0; num < 10; num++) {
+      var wires = nums[num].sorted((a, b) => a.compareTo(b));
+      var check = output.chars().toSet().sorted((a, b) => a.compareTo(b));
+      if (IterableEquality().equals(wires, check)) {
+        outputValue += "$num";
+        break;
+      }
+    }
+  }
+  return int.parse(outputValue);
 }
 
 int determineNumber(String element, List<Set<String>> nums) {
