@@ -12,7 +12,6 @@ int part1(List<String> input) {
   var outputs = input.map((e) => e.split(" | ")[1].split(" "));
   var count = 0;
   for (var line in outputs) {
-    print("---");
     for (var element in line) {
       var num = -1;
       if (element.length ==
@@ -35,7 +34,6 @@ int part1(List<String> input) {
         num = 8;
       }
       if (num > -1) {
-        print("$element -> $num");
         num = -1;
         count++;
       }
@@ -52,7 +50,6 @@ int part2(List<String> input) {
   for (var pattern in patterns) {
     var inputs = pattern[0].toList();
     var outputs = pattern[1];
-    print("---");
 
     var nums = {
       0: <String>{},
@@ -84,7 +81,6 @@ int part2(List<String> input) {
 
     } while (inputs.isNotEmpty && change);
     nums[0]!.addAll(inputs.first.chars());
-    print(nums);
 
     var outputValue = "";
     for (var output in outputs) {
@@ -96,11 +92,8 @@ int part2(List<String> input) {
         }
       });
     }
-    print("output: $outputValue");
     outputValues.add(int.parse(outputValue));
   }
-
-  print(outputValues);
 
   return outputValues.sum();
 }
@@ -124,12 +117,9 @@ int determineNumber(String element, Map<int, Set<String>> nums) {
         possible.remove(e);
       });
 
-      //print("possible $element:  $possible");
       if (possible.length == 1) {
-        // print("found 5: $element");
         return 5;
       } else {
-        // print("found 2: $element");
         return 2;
       }
     }
@@ -146,7 +136,6 @@ int determineNumber(String element, Map<int, Set<String>> nums) {
       element.chars().forEach((e) {
         possible.remove(e);
       });
-      print("possible $element ->  $possible ");
       if (possible.length == 1 && nums[1]!.contains(possible.first)) {
         return 6;
       } else {
