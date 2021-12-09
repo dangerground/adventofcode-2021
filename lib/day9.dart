@@ -13,12 +13,21 @@ int part1(List<String> input) {
   var map =
       input.map((e) => e.split("").map((e) => int.parse(e)).toList()).toList();
 
+  List<int> found = findLowPoints(map);
+
+  printMap(map);
+
+  return found.map((e) => e + 1).toList().sum;
+}
+
+List<int> findLowPoints(List<List<int>> map) {
+  
   var found = <int>[];
   var height = map.length;
   var width = map[0].length;
-
+  
   // corners
-
+  
   var cell = map[0][0];
   if (map[0][1] > cell && map[1][0] > cell) {
     found.add(cell);
@@ -36,9 +45,9 @@ int part1(List<String> input) {
   if (map[0][width - 2] > cell && map[1][width - 1] > cell) {
     found.add(cell);
   }
-
+  
   // left
-
+  
   for (var y = 1; y < height - 2; y++) {
     var x = 0;
     var cell = map[y][x];
@@ -70,7 +79,7 @@ int part1(List<String> input) {
       found.add(cell);
     }
   }
-
+  
   // middle
   for (var y = 1; y < height - 1; y++) {
     for (var x = 1; x < width - 1; x++) {
@@ -83,10 +92,7 @@ int part1(List<String> input) {
       }
     }
   }
-
-  printMap(map);
-
-  return found.map((e) => e + 1).toList().sum;
+  return found;
 }
 
 void mark(List<List<int>> map, int y, int x) {
