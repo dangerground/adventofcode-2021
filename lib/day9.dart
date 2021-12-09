@@ -18,72 +18,20 @@ int part1(List<String> input) {
   return findLowPoints(map).map((e) => e.num + 1).toList().sum;
 }
 
-List<LowPoint> findLowPoints(List<List<int>> map) {
-  var lowPoints = <LowPoint>[];
+Set<LowPoint> findLowPoints(List<List<int>> map) {
+  var lowPoints = <LowPoint>{};
   var height = map.length;
   var width = map[0].length;
 
-  // corners
-
-  var cell = map[0][0];
-  if (map[0][1] > cell && map[1][0] > cell) {
-    lowPoints.add(LowPoint(0, 0, cell));
-  }
-  cell = map[height - 1][width - 1];
-  if (map[height - 1][width - 2] > cell && map[height - 2][width - 1] > cell) {
-    lowPoints.add(LowPoint(height - 1, width - 1, cell));
-  }
-  cell = map[height - 1][0];
-  if (map[height - 1][1] > cell && map[height - 2][0] > cell) {
-    lowPoints.add(LowPoint(height - 1, 0, cell));
-  }
-  cell = map[0][width - 1];
-  if (map[0][width - 2] > cell && map[1][width - 1] > cell) {
-    lowPoints.add(LowPoint(0, width - 1, cell));
-  }
-
-  // left
-
-  for (var y = 1; y < height - 2; y++) {
-    var x = 0;
-    var cell = map[y][x];
-    if (map[y - 1][x] > cell && map[y][x + 1] > cell && map[y + 1][x] > cell) {
-      lowPoints.add(LowPoint(y, x, cell));
-    }
-  }
-  // right
-  for (var y = 1; y < height - 2; y++) {
-    var x = width - 1;
-    var cell = map[y][x];
-    if (map[y - 1][x] > cell && map[y][x - 1] > cell && map[y + 1][x] > cell) {
-      lowPoints.add(LowPoint(y, x, cell));
-    }
-  }
-  //top
-  for (var x = 1; x < width - 2; x++) {
-    var y = 0;
-    var cell = map[y][x];
-    if (map[y][x - 1] > cell && map[y][x + 1] > cell && map[y + 1][x] > cell) {
-      lowPoints.add(LowPoint(y, x, cell));
-    }
-  }
-  // down
-  for (var x = 1; x < width - 2; x++) {
-    var y = height - 1;
-    var cell = map[y][x];
-    if (map[y][x - 1] > cell && map[y][x + 1] > cell && map[y - 1][x] > cell) {
-      lowPoints.add(LowPoint(y, x, cell));
-    }
-  }
-
   // middle
-  for (var y = 1; y < height - 1; y++) {
-    for (var x = 1; x < width - 1; x++) {
+  for (var y = 0; y < height; y++) {
+    for (var x = 0; x < width; x++) {
       var cell = map[y][x];
-      if (map[y - 1][x] > cell &&
-          map[y + 1][x] > cell &&
-          map[y][x + 1] > cell &&
-          map[y][x - 1] > cell) {
+
+      if ((y == 0 || map[y - 1][x] > cell) &&
+          (y == height - 1 || map[y + 1][x] > cell) &&
+          (x == width - 1 || map[y][x + 1] > cell) &&
+          (x == 0 || map[y][x - 1] > cell)) {
         lowPoints.add(LowPoint(y, x, cell));
       }
     }
@@ -115,7 +63,6 @@ int part2(List<String> input) {
   var basinSizes = <int>[];
 
   for (var lowPoint in lowPoints) {
-
     var basin = {lowPoint};
     var checkIfBasin = {lowPoint};
     while (checkIfBasin.isNotEmpty) {
