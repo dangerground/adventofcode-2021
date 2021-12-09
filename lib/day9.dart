@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 
 import 'package:adventofcode2021/util/input.dart';
@@ -13,9 +15,7 @@ int part1(List<String> input) {
   var map =
       input.map((e) => e.split("").map((e) => int.parse(e)).toList()).toList();
 
-  List<LowPoint> found = findLowPoints(map);
-
-  return found.map((e) => e.num + 1).toList().sum;
+  return findLowPoints(map).map((e) => e.num + 1).toList().sum;
 }
 
 List<LowPoint> findLowPoints(List<List<int>> map) {
@@ -188,25 +188,15 @@ Set<LowPoint> findNext(LowPoint point, List<List<int>> map) {
   return toCheck;
 }
 
-class LowPoint {
-  final int x;
-  final int y;
+class LowPoint extends Point<int> {
   final int num;
   final Direction check;
 
-  LowPoint(this.y, this.x, this.num, {this.check = Direction.all});
+  LowPoint(int y, int x, this.num, {this.check = Direction.all}) : super(x, y);
 
   @override
   String toString() {
     return "($y, $x) =  $num";
-  }
-
-  @override
-  int get hashCode => 37 * x + 19 * y;
-
-  @override
-  bool operator ==(Object o) {
-    return o is LowPoint && x == o.x && y == o.y;
   }
 }
 
