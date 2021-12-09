@@ -19,7 +19,7 @@ int part1(List<String> input) {
 }
 
 List<LowPoint> findLowPoints(List<List<int>> map) {
-  var found = <LowPoint>[];
+  var lowPoints = <LowPoint>[];
   var height = map.length;
   var width = map[0].length;
 
@@ -27,20 +27,19 @@ List<LowPoint> findLowPoints(List<List<int>> map) {
 
   var cell = map[0][0];
   if (map[0][1] > cell && map[1][0] > cell) {
-    found.add(LowPoint(0, 0, cell));
-    mark(map, 0, 0);
+    lowPoints.add(LowPoint(0, 0, cell));
   }
   cell = map[height - 1][width - 1];
   if (map[height - 1][width - 2] > cell && map[height - 2][width - 1] > cell) {
-    found.add(LowPoint(height - 1, width - 1, cell));
+    lowPoints.add(LowPoint(height - 1, width - 1, cell));
   }
   cell = map[height - 1][0];
   if (map[height - 1][1] > cell && map[height - 2][0] > cell) {
-    found.add(LowPoint(height - 1, 0, cell));
+    lowPoints.add(LowPoint(height - 1, 0, cell));
   }
   cell = map[0][width - 1];
   if (map[0][width - 2] > cell && map[1][width - 1] > cell) {
-    found.add(LowPoint(0, width - 1, cell));
+    lowPoints.add(LowPoint(0, width - 1, cell));
   }
 
   // left
@@ -49,7 +48,7 @@ List<LowPoint> findLowPoints(List<List<int>> map) {
     var x = 0;
     var cell = map[y][x];
     if (map[y - 1][x] > cell && map[y][x + 1] > cell && map[y + 1][x] > cell) {
-      found.add(LowPoint(y, x, cell));
+      lowPoints.add(LowPoint(y, x, cell));
     }
   }
   // right
@@ -57,7 +56,7 @@ List<LowPoint> findLowPoints(List<List<int>> map) {
     var x = width - 1;
     var cell = map[y][x];
     if (map[y - 1][x] > cell && map[y][x - 1] > cell && map[y + 1][x] > cell) {
-      found.add(LowPoint(y, x, cell));
+      lowPoints.add(LowPoint(y, x, cell));
     }
   }
   //top
@@ -65,7 +64,7 @@ List<LowPoint> findLowPoints(List<List<int>> map) {
     var y = 0;
     var cell = map[y][x];
     if (map[y][x - 1] > cell && map[y][x + 1] > cell && map[y + 1][x] > cell) {
-      found.add(LowPoint(y, x, cell));
+      lowPoints.add(LowPoint(y, x, cell));
     }
   }
   // down
@@ -73,7 +72,7 @@ List<LowPoint> findLowPoints(List<List<int>> map) {
     var y = height - 1;
     var cell = map[y][x];
     if (map[y][x - 1] > cell && map[y][x + 1] > cell && map[y - 1][x] > cell) {
-      found.add(LowPoint(y, x, cell));
+      lowPoints.add(LowPoint(y, x, cell));
     }
   }
 
@@ -85,15 +84,12 @@ List<LowPoint> findLowPoints(List<List<int>> map) {
           map[y + 1][x] > cell &&
           map[y][x + 1] > cell &&
           map[y][x - 1] > cell) {
-        found.add(LowPoint(y, x, cell));
+        lowPoints.add(LowPoint(y, x, cell));
       }
     }
   }
-  return found;
-}
 
-void mark(List<List<int>> map, int y, int x) {
-  map[y][x] = 0;
+  return lowPoints;
 }
 
 void printMap(map) {
@@ -115,52 +111,52 @@ int part2(List<String> input) {
   var map =
       input.map((e) => e.split("").map((e) => int.parse(e)).toList()).toList();
 
-  var found = findLowPoints(map);
-  var sums = <int>[];
+  var lowPoints = findLowPoints(map);
+  var basinSizes = <int>[];
 
-  for (var lowPoint in found) {
-    //print("checking lowPoint  $lowPoint");
-    var totalFound = {lowPoint};
-    var remainingLowPoints = {lowPoint};
-    while (remainingLowPoints.isNotEmpty) {
-      var checking = remainingLowPoints.first;
+  for (var lowPoint in lowPoints) {
 
-      var f = findNext(checking, map);
-      remainingLowPoints.addAll(f);
-      totalFound.addAll(f);
+    var basin = {lowPoint};
+    var checkIfBasin = {lowPoint};
+    while (checkIfBasin.isNotEmpty) {
+      var current = checkIfBasin.first;
 
-      remainingLowPoints.remove(checking);
+      var newPoints = findNext(current, map);
+      checkIfBasin.addAll(newPoints);
+      basin.addAll(newPoints);
+
+      checkIfBasin.remove(current);
     }
 //    print(totalFound);
-    sums.add(totalFound.length);
+    basinSizes.add(basin.length);
   }
 
-  return sums
+  return basinSizes
       .sorted((a, b) => b.compareTo(a))
       .take(3)
       .reduce((value, element) => value * element);
 }
 
 Set<LowPoint> findNext(LowPoint point, List<List<int>> map) {
-  var toCheck = <LowPoint>{};
+  var newPoints = <LowPoint>{};
 
   if (point.check == Direction.vertical || point.check == Direction.all) {
     // to bottom
     for (var y = point.y + 1; y < map.length; y++) {
       var cell = map[y][point.x];
-      if (cell == 9 || point.num > cell) {
+      if (isNotInBasin(cell, point)) {
         break;
       }
-      toCheck.add(LowPoint(y, point.x, cell, check: Direction.horizontal));
+      newPoints.add(LowPoint(y, point.x, cell, check: Direction.horizontal));
     }
 
     // to top
     for (var y = point.y - 1; y >= 0; y--) {
       var cell = map[y][point.x];
-      if (cell == 9 || point.num > cell) {
+      if (isNotInBasin(cell, point)) {
         break;
       }
-      toCheck.add(LowPoint(y, point.x, cell, check: Direction.horizontal));
+      newPoints.add(LowPoint(y, point.x, cell, check: Direction.horizontal));
     }
   }
 
@@ -168,25 +164,27 @@ Set<LowPoint> findNext(LowPoint point, List<List<int>> map) {
     // to right
     for (var x = point.x + 1; x < map[0].length; x++) {
       var cell = map[point.y][x];
-      if (cell == 9 || point.num > cell) {
+      if (isNotInBasin(cell, point)) {
         break;
       }
-      toCheck.add(LowPoint(point.y, x, cell, check: Direction.vertical));
+      newPoints.add(LowPoint(point.y, x, cell, check: Direction.vertical));
     }
     // to left
     for (var x = point.x - 1; x >= 0; x--) {
       var cell = map[point.y][x];
-      if (cell == 9 || point.num > cell) {
+      if (isNotInBasin(cell, point)) {
         break;
       }
-      toCheck.add(LowPoint(point.y, x, cell, check: Direction.vertical));
+      newPoints.add(LowPoint(point.y, x, cell, check: Direction.vertical));
     }
   }
 
   //print("new ($point): $toCheck");
 
-  return toCheck;
+  return newPoints;
 }
+
+bool isNotInBasin(int cell, LowPoint point) => cell == 9 || point.num > cell;
 
 class LowPoint extends Point<int> {
   final int num;
