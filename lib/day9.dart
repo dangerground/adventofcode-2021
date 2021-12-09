@@ -115,15 +115,99 @@ int part2(List<String> input) {
   var map =
       input.map((e) => e.split("").map((e) => int.parse(e)).toList()).toList();
 
-  List<LowPoint> found = findLowPoints(map);
+  var found = findLowPoints(map);
+  var sums = <int>[];
 
-  return -1;
+  for (var lowPoint in found) {
+    //print("checking lowPoint  $lowPoint");
+    var totalFound = {lowPoint};
+    var remainingLowPoints = {lowPoint};
+    while (remainingLowPoints.isNotEmpty) {
+      var checking = remainingLowPoints.first;
+
+      var f = findNext(checking, map);
+      remainingLowPoints.addAll(f);
+      totalFound.addAll(f);
+
+      remainingLowPoints.remove(checking);
+    }
+//    print(totalFound);
+    sums.add(totalFound.length);
+  }
+
+  return sums
+      .sorted((a, b) => b.compareTo(a))
+      .take(3)
+      .reduce((value, element) => value * element);
+}
+
+Set<LowPoint> findNext(LowPoint point, List<List<int>> map) {
+  var toCheck = <LowPoint>{};
+
+  if (point.check == Direction.vertical || point.check == Direction.all) {
+    // to bottom
+    for (var y = point.y + 1; y < map.length; y++) {
+      var cell = map[y][point.x];
+      if (cell == 9 || point.num > cell) {
+        break;
+      }
+      toCheck.add(LowPoint(y, point.x, cell, check: Direction.horizontal));
+    }
+
+    // to top
+    for (var y = point.y - 1; y >= 0; y--) {
+      var cell = map[y][point.x];
+      if (cell == 9 || point.num > cell) {
+        break;
+      }
+      toCheck.add(LowPoint(y, point.x, cell, check: Direction.horizontal));
+    }
+  }
+
+  if (point.check == Direction.horizontal || point.check == Direction.all) {
+    // to right
+    for (var x = point.x + 1; x < map[0].length; x++) {
+      var cell = map[point.y][x];
+      if (cell == 9 || point.num > cell) {
+        break;
+      }
+      toCheck.add(LowPoint(point.y, x, cell, check: Direction.vertical));
+    }
+    // to left
+    for (var x = point.x - 1; x >= 0; x--) {
+      var cell = map[point.y][x];
+      if (cell == 9 || point.num > cell) {
+        break;
+      }
+      toCheck.add(LowPoint(point.y, x, cell, check: Direction.vertical));
+    }
+  }
+
+  //print("new ($point): $toCheck");
+
+  return toCheck;
 }
 
 class LowPoint {
   final int x;
   final int y;
   final int num;
+  final Direction check;
 
-  LowPoint(this.y, this.x, this.num);
+  LowPoint(this.y, this.x, this.num, {this.check = Direction.all});
+
+  @override
+  String toString() {
+    return "($y, $x) =  $num";
+  }
+
+  @override
+  int get hashCode => 37 * x + 19 * y;
+
+  @override
+  bool operator ==(Object o) {
+    return o is LowPoint && x == o.x && y == o.y;
+  }
 }
+
+enum Direction { all, horizontal, vertical, ignore }
