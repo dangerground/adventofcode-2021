@@ -40,21 +40,6 @@ Set<LowPoint> findLowPoints(List<List<int>> map) {
   return lowPoints;
 }
 
-void printMap(map) {
-  var result = "";
-  var height = map.length;
-  var width = map[0].length;
-  for (var y = 0; y < height; y++) {
-    for (var x = 0; x < width; x++) {
-      var cell = map[y][x];
-      result += "$cell";
-    }
-    result += "\n";
-  }
-
-  print(result);
-}
-
 int part2(List<String> input) {
   var map =
       input.map((e) => e.split("").map((e) => int.parse(e)).toList()).toList();
@@ -74,7 +59,6 @@ int part2(List<String> input) {
 
       checkIfBasin.remove(current);
     }
-//    print(totalFound);
     basinSizes.add(basin.length);
   }
 
@@ -126,8 +110,6 @@ Set<LowPoint> findNext(LowPoint point, List<List<int>> map) {
     }
   }
 
-  //print("new ($point): $toCheck");
-
   return newPoints;
 }
 
@@ -138,11 +120,6 @@ class LowPoint extends Point<int> {
   final Direction check;
 
   LowPoint(int y, int x, this.num, {this.check = Direction.all}) : super(x, y);
-
-  @override
-  String toString() {
-    return "($y, $x) =  $num";
-  }
 }
 
 enum Direction { all, horizontal, vertical, ignore }
