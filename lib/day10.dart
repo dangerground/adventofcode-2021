@@ -35,27 +35,21 @@ int part1(List<String> input) {
 
   for (var value in input) {
     var stack = <String>[];
-    //print("---");
 
     for (var value1 in value.chars()) {
       if (beginner.values.contains(value1)) {
-        //print("add: $value1");
         stack.add(value1);
       } else {
         var inv = beginner[value1]!;
         if (stack.last == inv) {
-          //print("remove  $value1");
           stack.removeLast();
         } else {
-          //print("found $value1 for $inv in stack: $stack");
           illegals.add(value1);
           break;
         }
       }
     }
   }
-
-  print(illegals);
 
   return illegals.map((e) => points[e]!).sum;
 }
@@ -71,21 +65,17 @@ int part2(List<String> input) {
   var scores = <int>[];
   for (var value in input) {
     var stack = <String>[];
-    //print("---");
 
     var isValid = true;
     for (var value1 in value.chars()) {
       if (beginner.values.contains(value1)) {
-        //print("add: $value1");
         stack.add(value1);
       } else {
         var inv = beginner[value1]!;
         if (stack.last == inv) {
-          //print("remove  $value1");
           stack.removeLast();
         } else {
           isValid = false;
-          //print("found $value1 for $inv in stack: $stack");
           break;
         }
       }
@@ -96,7 +86,6 @@ int part2(List<String> input) {
         score *= 5;
         score += points[closer[v2]!]!;
       }
-      print(score);
       scores.add(score);
     }
   }
