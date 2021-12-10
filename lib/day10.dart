@@ -53,5 +53,59 @@ int part1(List<String> input) {
 }
 
 int part2(List<String> input) {
-  return -1;
+  var illegals = <String>[];
+
+  var inverts = {
+    ')': '(',
+    '}': '{',
+    ']': '[',
+    '>': '<',
+  };
+  var closer = {
+    '(': ')',
+    '{': '}',
+    '[': ']',
+    '<': '>',
+  };
+  var points = {
+    ')': 1,
+    ']': 2,
+    '}': 3,
+    '>': 4,
+  };
+
+  var scores = <int>[];
+  for (var value in input) {
+    var stack = <String>[];
+    //print("---");
+
+    var isValid = true;
+    for (var value1 in value.split("")) {
+      if (['(', '{', '<', '['].contains(value1)) {
+        //print("add: $value1");
+        stack.add(value1);
+      } else {
+        var inv = inverts[value1]!;
+        if (stack.last == inv) {
+          //print("remove  $value1");
+          stack.removeLast();
+        } else {
+          isValid = false;
+          //print("found $value1 for $inv in stack: $stack");
+          break;
+        }
+      }
+    }
+    if (isValid) {
+      int score = 0;
+      for (var v2 in stack.reversed) {
+        score *= 5;
+        score += points[closer[v2]!]!;
+      }
+      print(score);
+      scores.add(score);
+    }
+  }
+
+  return scores.sorted((a, b) => a.compareTo(b))[scores.length ~/ 2];
 }
