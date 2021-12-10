@@ -10,7 +10,7 @@ void main() {
   print("Solution part2: [ ${part2(input)} ]");
 }
 
-var beginner = {
+var opener = {
   ')': '(',
   '}': '{',
   ']': '[',
@@ -24,7 +24,7 @@ var closer = {
 };
 
 int part1(List<String> input) {
-  var illegals = <String>[];
+  var syntaxErrors = <String>[];
 
   var points = {
     ')': 3,
@@ -33,29 +33,30 @@ int part1(List<String> input) {
     '>': 25137,
   };
 
-  for (var value in input) {
-    var stack = <String>[];
+  for (var chunk in input) {
+    var stackOfOpeners = <String>[];
 
-    for (var value1 in value.chars()) {
-      var updated = updateStack(value1, stack);
+    for (var bracketChar in chunk.chars()) {
+      var updated = updateStack(bracketChar, stackOfOpeners);
       if (!updated) {
-        illegals.add(value1);
+        syntaxErrors.add(bracketChar);
         break;
       }
     }
   }
 
-  return illegals.map((e) => points[e]!).sum;
+  return syntaxErrors.map((e) => points[e]!).sum;
 }
 
-bool updateStack(String value1, List<String> stack) {
-  if (beginner.values.contains(value1)) {
-    stack.add(value1);
-  } else if (stack.last == beginner[value1]) {
-    stack.removeLast();
+bool updateStack(String bracketChar, List<String> stackOfOpeners) {
+  if (opener.values.contains(bracketChar)) {
+    stackOfOpeners.add(bracketChar);
+  } else if (stackOfOpeners.last == opener[bracketChar]) {
+    stackOfOpeners.removeLast();
   } else {
     return false;
   }
+
   return true;
 }
 
@@ -68,12 +69,12 @@ int part2(List<String> input) {
   };
 
   var scores = <int>[];
-  for (var value in input) {
-    var stack = <String>[];
+  for (var chunk in input) {
+    var stackOfOpeners = <String>[];
 
     var isValid = true;
-    for (var value1 in value.chars()) {
-      var updated = updateStack(value1, stack);
+    for (var bracketChar in chunk.chars()) {
+      var updated = updateStack(bracketChar, stackOfOpeners);
       if (!updated) {
         isValid = false;
         break;
@@ -82,9 +83,9 @@ int part2(List<String> input) {
 
     if (isValid) {
       int score = 0;
-      for (var v2 in stack.reversed) {
+      for (var bracketChar in stackOfOpeners.reversed) {
         score *= 5;
-        score += points[closer[v2]!]!;
+        score += points[closer[bracketChar]!]!;
       }
       scores.add(score);
     }
