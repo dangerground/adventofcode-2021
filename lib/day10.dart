@@ -37,21 +37,26 @@ int part1(List<String> input) {
     var stack = <String>[];
 
     for (var value1 in value.chars()) {
-      if (beginner.values.contains(value1)) {
-        stack.add(value1);
-      } else {
-        var inv = beginner[value1]!;
-        if (stack.last == inv) {
-          stack.removeLast();
-        } else {
-          illegals.add(value1);
-          break;
-        }
+      var updated = updateStack(value1, stack);
+      if (!updated) {
+        illegals.add(value1);
+        break;
       }
     }
   }
 
   return illegals.map((e) => points[e]!).sum;
+}
+
+bool updateStack(String value1, List<String> stack) {
+  if (beginner.values.contains(value1)) {
+    stack.add(value1);
+  } else if (stack.last == beginner[value1]) {
+    stack.removeLast();
+  } else {
+    return false;
+  }
+  return true;
 }
 
 int part2(List<String> input) {
@@ -68,18 +73,13 @@ int part2(List<String> input) {
 
     var isValid = true;
     for (var value1 in value.chars()) {
-      if (beginner.values.contains(value1)) {
-        stack.add(value1);
-      } else {
-        var inv = beginner[value1]!;
-        if (stack.last == inv) {
-          stack.removeLast();
-        } else {
-          isValid = false;
-          break;
-        }
+      var updated = updateStack(value1, stack);
+      if (!updated) {
+        isValid = false;
+        break;
       }
     }
+
     if (isValid) {
       int score = 0;
       for (var v2 in stack.reversed) {
