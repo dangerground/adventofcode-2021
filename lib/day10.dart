@@ -30,12 +30,6 @@ var opener = {
   ']': '[',
   '>': '<',
 };
-var closer = {
-  '(': ')',
-  '{': '}',
-  '[': ']',
-  '<': '>',
-};
 
 int part1(List<String> input) {
   var syntaxErrors = <String>[];
@@ -76,10 +70,10 @@ bool updateStack(String bracketChar, Stack<String> stackOfOpeners) {
 
 int part2(List<String> input) {
   var points = {
-    ')': 1,
-    ']': 2,
-    '}': 3,
-    '>': 4,
+    '(': 1,
+    '[': 2,
+    '{': 3,
+    '<': 4,
   };
 
   var scores = <int>[];
@@ -99,7 +93,7 @@ int part2(List<String> input) {
       int score = 0;
       for (var bracketChar in stackOfOpeners.reversed()) {
         score *= 5;
-        score += points[closer[bracketChar]!]!;
+        score += points[bracketChar]!;
       }
       scores.add(score);
     }
