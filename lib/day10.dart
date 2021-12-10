@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:adventofcode2021/day8.dart';
 import 'package:collection/collection.dart';
 
@@ -8,6 +10,18 @@ void main() {
 
   print("Solution part1: [ ${part1(input)} ]");
   print("Solution part2: [ ${part2(input)} ]");
+}
+
+typedef Stack<E> = ListQueue<E>;
+
+extension StackFuns<E> on Stack<E> {
+  push(E el) => add(el);
+
+  pop() => removeLast();
+
+  Iterable<E> reversed() => toList().reversed;
+
+  E top() => last;
 }
 
 var opener = {
@@ -34,7 +48,7 @@ int part1(List<String> input) {
   };
 
   for (var chunk in input) {
-    var stackOfOpeners = <String>[];
+    var stackOfOpeners = Stack<String>();
 
     for (var bracketChar in chunk.chars()) {
       var updated = updateStack(bracketChar, stackOfOpeners);
@@ -48,11 +62,11 @@ int part1(List<String> input) {
   return syntaxErrors.map((e) => points[e]!).sum;
 }
 
-bool updateStack(String bracketChar, List<String> stackOfOpeners) {
+bool updateStack(String bracketChar, Stack<String> stackOfOpeners) {
   if (opener.values.contains(bracketChar)) {
-    stackOfOpeners.add(bracketChar);
-  } else if (stackOfOpeners.last == opener[bracketChar]) {
-    stackOfOpeners.removeLast();
+    stackOfOpeners.push(bracketChar);
+  } else if (stackOfOpeners.top() == opener[bracketChar]) {
+    stackOfOpeners.pop();
   } else {
     return false;
   }
@@ -70,7 +84,7 @@ int part2(List<String> input) {
 
   var scores = <int>[];
   for (var chunk in input) {
-    var stackOfOpeners = <String>[];
+    var stackOfOpeners = Stack<String>();
 
     var isValid = true;
     for (var bracketChar in chunk.chars()) {
@@ -83,7 +97,7 @@ int part2(List<String> input) {
 
     if (isValid) {
       int score = 0;
-      for (var bracketChar in stackOfOpeners.reversed) {
+      for (var bracketChar in stackOfOpeners.reversed()) {
         score *= 5;
         score += points[closer[bracketChar]!]!;
       }
