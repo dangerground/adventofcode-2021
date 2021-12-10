@@ -90,11 +90,10 @@ int part2(List<String> input) {
     }
 
     if (isValid) {
-      int score = 0;
-      for (var bracketChar in stackOfOpeners.reversed()) {
-        score *= 5;
-        score += points[bracketChar]!;
-      }
+      var score = stackOfOpeners
+          .reversed()
+          .map((e) => points[e]!)
+          .reduce((acc, value) => (acc * 5) + value);
       scores.add(score);
     }
   }
