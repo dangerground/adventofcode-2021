@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 
 import 'package:adventofcode2021/util/input.dart';
+import 'package:adventofcode2021/util/strings.dart';
 
 void main() {
   final input = readLinesAsString(8);
@@ -145,25 +146,4 @@ bool isNine(List<Set<String>> nums, String element) {
       nums[4].isNotEmpty &&
       element.containsAll(nums[3]) &&
       element.containsAll(nums[4]);
-}
-
-extension StringContainsAll on String {
-  bool containsAll(Iterable<String> contain) {
-    for (var value in contain) {
-      if (!contains(value)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  Iterable<String> chars() {
-    var res = <String>[];
-    for (var i = 0; i < length; i++) {
-      res.add(this[i]);
-    }
-
-    return res;
-  }
 }

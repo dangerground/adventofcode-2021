@@ -1,9 +1,8 @@
 import 'dart:collection';
-
-import 'package:adventofcode2021/day8.dart';
 import 'package:collection/collection.dart';
 
 import 'package:adventofcode2021/util/input.dart';
+import 'package:adventofcode2021/util/strings.dart';
 
 void main() {
   final input = readLinesAsString(10);
