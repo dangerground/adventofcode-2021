@@ -6,7 +6,9 @@ void main() {
 3987894921
 9856789892
 8767896789
-9899965678'''.split("\n").toList();
+9899965678'''
+      .split("\n")
+      .toList();
 
   group("part1", () {
     test('given example', () {

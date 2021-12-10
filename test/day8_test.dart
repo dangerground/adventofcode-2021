@@ -17,7 +17,6 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
           .toList();
 
   group("part1", () {
-
     test('given example', () {
       // when
       final result = part1(input);
@@ -31,9 +30,9 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
     test('simple example', () {
       // given
       var simple =
-      '''acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf'''
-          .split("\n")
-          .toList();
+          '''acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf'''
+              .split("\n")
+              .toList();
 
       // when
       final result = part2(simple);
