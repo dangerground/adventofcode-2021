@@ -81,5 +81,27 @@ void printMap(List<List<String>> map) {
 }
 
 int part2(List<String> input) {
-  return -1;
+
+  var map = input.map((e) => e.split("").toList()).toList();
+
+  var height = map.length;
+  var width = map[0].length;
+
+  var simultaneousFlashes = 0;
+  var step  = 0;
+  do {
+    simultaneousFlashes = 0;
+    step++;
+
+    for (var y = 0; y < height; y++) {
+      for (var x = 0; x < width; x++) {
+        simultaneousFlashes += updateMap(map, y, x);
+      }
+    }
+    print("step ${step + 1} ($simultaneousFlashes)");
+
+    resetFlashes(map);
+  } while (simultaneousFlashes < 100);
+
+  return step;
 }
