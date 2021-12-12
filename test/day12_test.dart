@@ -47,14 +47,14 @@ start-RW'''
       .toList();
 
   group("part1", () {
-    test('given example small', () {
+    test('p1 - given example small', () {
       // when
       final result = part1(inputSmall);
 
       // then
       expect(result, equals(10));
     });
-    test('given example medium', () {
+    test('p1 - given example medium', () {
       // when
       final result = part1(inputMedium);
 
@@ -62,7 +62,7 @@ start-RW'''
       expect(result, equals(19));
     });
 
-    test('given example big', () {
+    test('p1 - given example big', () {
       // when
       final result = part1(inputBig);
 
@@ -72,12 +72,26 @@ start-RW'''
   });
 
   group("part2", () {
-    test('given example', () {
+    test('p2 - given example small', () {
       // when
       final result = part2(inputSmall);
 
       // then
-      expect(result, equals(666));
+      expect(result, equals(36));
+    });
+    test('p2 - given example medium', () {
+      // when
+      final result = part2(inputMedium);
+
+      // then
+      expect(result, equals(103));
+    });
+    test('p2 - given example big', () {
+      // when
+      final result = part2(inputBig);
+
+      // then
+      expect(result, equals(3509));
     });
   });
 }
