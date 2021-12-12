@@ -8,6 +8,12 @@ void main() {
 }
 
 int part1(List<String> input) {
+  Map<String, Set<String>> ways = directionalEdges(input);
+
+  return countPaths(ways, 'start', <String>{});
+}
+
+Map<String, Set<String>> directionalEdges(List<String> input) {
   var ways = <String, Set<String>>{};
   input.map((e) => e.split("-").toList()).forEach((element) {
     var p1 = element[0];
@@ -19,8 +25,7 @@ int part1(List<String> input) {
     ways[p1]!.add(p2);
     ways[p2]!.add(p1);
   });
-
-  return countPaths(ways, 'start', <String>{});
+  return ways;
 }
 
 int countPaths(Map<String, Set<String>> ways, String p1, Set<String> visited) {
@@ -44,17 +49,7 @@ int countPaths(Map<String, Set<String>> ways, String p1, Set<String> visited) {
 }
 
 int part2(List<String> input) {
-  var ways = <String, Set<String>>{};
-  input.map((e) => e.split("-").toList()).forEach((element) {
-    var p1 = element[0];
-    var p2 = element[1];
-
-    ways.putIfAbsent(p1, () => <String>{});
-    ways.putIfAbsent(p2, () => <String>{});
-
-    ways[p1]!.add(p2);
-    ways[p2]!.add(p1);
-  });
+  Map<String, Set<String>> ways = directionalEdges(input);
 
   return countPaths2(ways, 'start', {}, 2);
 }
