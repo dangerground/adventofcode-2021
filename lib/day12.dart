@@ -20,18 +20,10 @@ int part1(List<String> input) {
     ways[p2]!.add(p1);
   });
 
-//  print(ways);
-
-  var routes = <List<String>>{};
-  var count = countPaths(ways, 'start', routes, <String>{});
-
-  print(routes);
-
-  return count;
+  return countPaths(ways, 'start', <String>{});
 }
 
-int countPaths(Map<String, Set<String>> ways, String p1,
-    Set<List<String>> routes, Set<String> visited) {
+int countPaths(Map<String, Set<String>> ways, String p1, Set<String> visited) {
   var newVisited = Set<String>.from(visited);
   if (p1.toLowerCase() == p1 && visited.contains(p1)) {
     return 0;
@@ -41,14 +33,11 @@ int countPaths(Map<String, Set<String>> ways, String p1,
 
   int count = 0;
   if (p1 == 'end') {
-    routes.add(newVisited.toList());
     return 1;
   }
 
   for (var element in ways[p1]!) {
-    //var newRoute = Set<String>.from(route);
-    //newRoute.add(element);
-    count += countPaths(ways, element, routes, newVisited);
+    count += countPaths(ways, element, newVisited);
   }
 
   return count;
@@ -67,24 +56,12 @@ int part2(List<String> input) {
     ways[p2]!.add(p1);
   });
 
-  var routes = <List<String>>{};
-  var count = countPaths2(ways, 'start', routes, [], {}, 2);
-
-  print("count $count");
-  /*routes.forEach((element) {
-    print(element);
-  });
-
-   */
-
-  return routes.length;
+  return countPaths2(ways, 'start', {}, 2);
 }
 
 int countPaths2(
   Map<String, Set<String>> ways,
   String p1,
-  Set<List<String>> routes,
-  List<String> path,
   Map<String, int> visited,
   int maxVisits,
 ) {
@@ -93,17 +70,13 @@ int countPaths2(
   if (smallCaveVisitedATLeastOnce(p1, newVisited)) {
     // can always only used once
     if (p1 == 'start' || p1 == 'end') {
-      //print("reset $p1");
       return 0;
     }
-//    print("checking $p1; $value ($maxVisits)");
 
     // one can be used twice
-    if (maxVisits == 2 && newVisited[p1]!+1 == maxVisits) {
-      //print("maxVisits $p1");
+    if (maxVisits == 2 && newVisited[p1]! + 1 == maxVisits) {
       maxVisits = 1;
-    } else if (maxVisits == 1 && newVisited[p1]!+1 > maxVisits) {
-      //print("reset $p1: (${newVisited[p1]!} > ${maxVisits})");
+    } else if (maxVisits == 1 && newVisited[p1]! + 1 > maxVisits) {
       return 0;
     }
   }
@@ -111,27 +84,18 @@ int countPaths2(
   newVisited.putIfAbsent(p1, () => 0);
   newVisited[p1] = newVisited[p1]! + 1;
 
-
-  var newPath = List<String>.from(path);
-  newPath.add(p1);
-
   int count = 0;
   if (p1 == 'end') {
-//    print(newPath);
-    routes.add(newPath);
     return 1;
   }
 
   for (var element in ways[p1]!) {
-    //var newRoute = Set<String>.from(route);
-    //newRoute.add(element);
-    count += countPaths2(ways, element, routes, newPath, newVisited, maxVisits);
+    count += countPaths2(ways, element, newVisited, maxVisits);
   }
 
   return count;
 }
 
 bool smallCaveVisitedATLeastOnce(String p1, Map<String, int> visited) {
-  //print("checking $p1=${p1.toLowerCase()}: $visited");
   return p1.toLowerCase() == p1 && visited.containsKey(p1);
 }
