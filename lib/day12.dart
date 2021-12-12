@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import 'package:adventofcode2021/util/input.dart';
 
 void main() {
@@ -35,40 +37,33 @@ int part2(List<String> input) {
 }
 
 int countPaths(
-  Map<String, Set<String>> ways,
-  String p1,
+  Map<String, Set<String>> edges,
+  String knot,
   Map<String, int> visited,
   int maxVisits,
 ) {
-  var newVisited = Map<String, int>.from(visited);
-
-  if (smallCaveVisitedATLeastOnce(p1, newVisited)) {
-    // can always only used once
-    if (p1 == 'start' || p1 == 'end') {
-      return 0;
-    }
-
-    // one can be used twice
-    if (maxVisits == 2 && newVisited[p1]! + 1 == maxVisits) {
-      maxVisits = 1;
-    } else if (maxVisits == 1 && newVisited[p1]! + 1 > maxVisits) {
-      return 0;
-    }
-  }
-
-  newVisited.putIfAbsent(p1, () => 0);
-  newVisited[p1] = newVisited[p1]! + 1;
-
-  int count = 0;
-  if (p1 == 'end') {
+  if (knot == 'end') {
     return 1;
   }
 
-  for (var element in ways[p1]!) {
-    count += countPaths(ways, element, newVisited, maxVisits);
+  var newVisited = Map<String, int>.from(visited);
+  newVisited.putIfAbsent(knot, () => 0);
+  newVisited[knot] = newVisited[knot]! + 1;
+
+  if (smallCaveVisitedATLeastOnce(knot, visited)) {
+    // can always only used once
+    if (knot == 'start') {
+      return 0;
+    } else if (newVisited[knot]! == maxVisits) {
+      maxVisits = 1;
+    } else if (newVisited[knot]! > maxVisits) {
+      return 0;
+    }
   }
 
-  return count;
+  return edges[knot]!
+      .map((e) => countPaths(edges, e, newVisited, maxVisits))
+      .sum;
 }
 
 bool smallCaveVisitedATLeastOnce(String p1, Map<String, int> visited) {
