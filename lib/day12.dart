@@ -10,7 +10,7 @@ void main() {
 int part1(List<String> input) {
   Map<String, Set<String>> ways = directionalEdges(input);
 
-  return countPaths(ways, 'start', <String>{});
+  return countPaths(ways, 'start', {}, 1);
 }
 
 Map<String, Set<String>> directionalEdges(List<String> input) {
@@ -28,33 +28,13 @@ Map<String, Set<String>> directionalEdges(List<String> input) {
   return ways;
 }
 
-int countPaths(Map<String, Set<String>> ways, String p1, Set<String> visited) {
-  var newVisited = Set<String>.from(visited);
-  if (p1.toLowerCase() == p1 && visited.contains(p1)) {
-    return 0;
-  } else {
-    newVisited.add(p1);
-  }
-
-  int count = 0;
-  if (p1 == 'end') {
-    return 1;
-  }
-
-  for (var element in ways[p1]!) {
-    count += countPaths(ways, element, newVisited);
-  }
-
-  return count;
-}
-
 int part2(List<String> input) {
   Map<String, Set<String>> ways = directionalEdges(input);
 
-  return countPaths2(ways, 'start', {}, 2);
+  return countPaths(ways, 'start', {}, 2);
 }
 
-int countPaths2(
+int countPaths(
   Map<String, Set<String>> ways,
   String p1,
   Map<String, int> visited,
@@ -85,7 +65,7 @@ int countPaths2(
   }
 
   for (var element in ways[p1]!) {
-    count += countPaths2(ways, element, newVisited, maxVisits);
+    count += countPaths(ways, element, newVisited, maxVisits);
   }
 
   return count;
