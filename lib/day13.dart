@@ -47,34 +47,20 @@ Set<Point<int>> foldBy(String element, Set<Point<int>> points) {
   var testY = element.split("fold along y=");
   var testX = element.split("fold along x=");
   if (testX.length == 2) {
-    points = foldAtX(points, int.parse(testX[1]));
+    return foldAtX(points, int.parse(testX[1]));
   } else {
-    points = foldAtY(points, int.parse(testY[1]));
+    return foldAtY(points, int.parse(testY[1]));
   }
-  return points;
 }
 
 Set<Point<int>> foldAtY(Set<Point<int>> points, int foldAt) {
-  var newPoints = <Point<int>>{};
-  for (var point in points) {
-    if (point.y > foldAt) {
-      newPoints.add(Point(point.x,2*foldAt-point.y));
-    }  else {
-      newPoints.add(point);
-    }
-  }
-  return newPoints;
+  return points
+      .map((p) => (p.y < foldAt) ? p : Point(p.x, 2 * foldAt - p.y))
+      .toSet();
 }
 
 Set<Point<int>> foldAtX(Set<Point<int>> points, int foldAt) {
-  var newPoints = <Point<int>>{};
-  for (var point in points) {
-      if (point.x > foldAt) {
-        newPoints.add(Point(2*foldAt-point.x, point.y));
-      }  else {
-        newPoints.add(point);
-      }
-  }
-
-  return newPoints;
+  return points
+      .map((p) => (p.x < foldAt) ? p : Point(2 * foldAt - p.x, p.y))
+      .toSet();
 }
