@@ -43,7 +43,7 @@ fold along x=5'''
       final result = part2(input);
 
       // then
-      expect(result, equals(666));
+      expect(result, equals(0));
     });
   });
 }
