@@ -1,4 +1,3 @@
-
 extension StringContainsAll on String {
   bool containsAll(Iterable<String> contain) {
     for (var value in contain) {

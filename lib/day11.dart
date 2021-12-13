@@ -81,14 +81,13 @@ void printMap(List<List<String>> map) {
 }
 
 int part2(List<String> input) {
-
   var map = input.map((e) => e.split("").toList()).toList();
 
   var height = map.length;
   var width = map[0].length;
 
   var simultaneousFlashes = 0;
-  var step  = 0;
+  var step = 0;
   do {
     simultaneousFlashes = 0;
     step++;
