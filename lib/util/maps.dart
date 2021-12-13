@@ -45,7 +45,7 @@ class AccessMap {
     var result = "";
     for (var y = 0; y < _height; y++) {
       for (var x = 0; x < _width; x++) {
-        var entry = get(x, y) ?? ".";
+        var entry = get(x, y) ?? " ";
         result += "$entry";
       }
       result += "\n";
