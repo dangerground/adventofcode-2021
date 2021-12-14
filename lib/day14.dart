@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:adventofcode2021/util/input.dart';
 import 'package:adventofcode2021/util/strings.dart';
-import 'package:collection/collection.dart';
 
 void main() {
   final input = readLinesInBatches(14);
@@ -26,26 +25,20 @@ int part1(List<List<String>> batches) {
         var x = template.indexOf(pattern, lastFound);
         if (x > -1) {
           inserts[x + 1] = insert;
-          //print("${x + 1} = $insert}");
         }
         lastFound = x + 1;
       } while (lastFound > 0);
     });
-
-//    print(inserts);
 
     var sortedInserts = inserts.keys.toList();
     sortedInserts.sort((a, b) => a.compareTo(b));
 
     var chars = template.chars().toList();
     sortedInserts.reversed.forEach((index) {
-      //print("$index, ${inserts[index]!}");
       chars.insert(index, inserts[index]!);
     });
 
     template = chars.join();
-
-    print("After step ${i + 1}: ${template.length}");
   }
 
   var counts = <String, int>{};
@@ -53,16 +46,12 @@ int part1(List<List<String>> batches) {
     counts[element] = (counts[element] ?? 0) + 1;
   });
 
-  print(counts);
-
   var most = 0;
   var uncommon = counts.values.first;
   counts.forEach((key, value) {
     most = max(most, value);
     uncommon = min(uncommon, value);
   });
-
-  print("most $most * uncommon $uncommon");
 
   return most - uncommon;
 }
@@ -83,8 +72,6 @@ int part2(List<List<String>> batches) {
     ];
   }
 
-  print(pairs);
-
   var steps = 40;
   for (var i = 0; i < steps; i++) {
     var newPairs = {...pairs};
@@ -94,19 +81,11 @@ int part2(List<List<String>> batches) {
         newPairs[pattern] = (newPairs[pattern] ?? 0) - value;
         newPairs[insert[0]] = (newPairs[insert[0]] ?? 0) + value;
         newPairs[insert[1]] = (newPairs[insert[1]] ?? 0) + value;
-        //print("$pattern -> ${insert[0]} + ${insert[1]}");
-//        print(newPairs);
       }
     });
 
     pairs = newPairs;
-
-    var length = pairs.values.sum + 1;
-
-//    print(pairs);
-    print("After step ${i + 1}: ${length}");
   }
-
 
   var charCount = <String, int>{};
   pairs.forEach((key, value) {
@@ -114,19 +93,15 @@ int part2(List<List<String>> batches) {
     charCount[char[0]] = (charCount[char[0]] ?? 0) + value;
     charCount[char[1]] = (charCount[char[1]] ?? 0) + value;
   });
-  var corrected = charCount
-      .map((key, value) => MapEntry(key, (value+1) ~/ 2));
-
+  var corrected =
+      charCount.map((key, value) => MapEntry(key, (value + 1) ~/ 2));
 
   var most = 0;
   var uncommon = corrected.values.first;
-    corrected.forEach((key, value) {
-        print("char $key = $value");
+  corrected.forEach((key, value) {
     most = max(most, value);
     uncommon = min(uncommon, value);
   });
-
-  print("most $most * uncommon $uncommon");
 
   return (most - uncommon).toInt();
 }
