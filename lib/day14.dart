@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:adventofcode2021/util/input.dart';
-import 'package:adventofcode2021/util/strings.dart';
 
 void main() {
   final input = readLinesInBatches(14);
@@ -11,8 +10,8 @@ void main() {
 }
 
 int part1(List<List<String>> batches) {
-  var pairs = getInitialPairs(batches);
-  var pairMappings = getPairInserts(batches);
+  var pairs = getInitialPairs(batches[0][0]);
+  var pairMappings = getPairInserts(batches[1]);
 
   var steps = 10;
   for (var i = 0; i < steps; i++) {
@@ -25,8 +24,8 @@ int part1(List<List<String>> batches) {
 }
 
 int part2(List<List<String>> batches) {
-  var pairs = getInitialPairs(batches);
-  var pairMappings = getPairInserts(batches);
+  var pairs = getInitialPairs(batches[0][0]);
+  var pairMappings = getPairInserts(batches[1]);
 
   var steps = 40;
   for (var i = 0; i < steps; i++) {
@@ -34,19 +33,18 @@ int part2(List<List<String>> batches) {
   }
 
   var corrected = countChars(pairs);
-
   return diffBetweenMostAndRarestChar(corrected);
 }
 
-int diffBetweenMostAndRarestChar(Map<String, int> corrected) {
+int diffBetweenMostAndRarestChar(Map<String, int> charCounts) {
   var most = 0;
-  var uncommon = corrected.values.first;
-  corrected.forEach((key, value) {
+  var uncommon = charCounts.values.first;
+  charCounts.forEach((key, value) {
     most = max(most, value);
     uncommon = min(uncommon, value);
   });
 
-  return (most - uncommon).toInt();
+  return most - uncommon;
 }
 
 Map<String, int> countChars(Map<String, int> pairs) {
@@ -75,9 +73,9 @@ Map<String, int> insertMappings(
   return newPairs;
 }
 
-Map<String, List<String>> getPairInserts(List<List<String>> batches) {
+Map<String, List<String>> getPairInserts(List<String> patterns) {
   var pairMappings = <String, List<String>>{};
-  for (var value in batches[1].map((e) => e.split(" -> "))) {
+  for (var value in patterns.map((e) => e.split(" -> "))) {
     pairMappings[value[0]] = [
       "${value[0][0]}${value[1]}",
       "${value[1]}${value[0][1]}"
@@ -86,9 +84,8 @@ Map<String, List<String>> getPairInserts(List<List<String>> batches) {
   return pairMappings;
 }
 
-Map<String, int> getInitialPairs(List<List<String>> batches) {
+Map<String, int> getInitialPairs(String tmpl) {
   var pairs = <String, int>{};
-  var tmpl = batches[0][0];
   for (var i = 0; i < tmpl.length - 1; i++) {
     var pair = tmpl.substring(i, i + 2);
     pairs[pair] = (pairs[pair] ?? 0) + 1;
