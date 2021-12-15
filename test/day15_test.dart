@@ -16,6 +16,20 @@ void main() {
       .toList();
 
   group("part1", () {
+    test('p1 - simple example', () {
+      // given
+      final inputSimple = '''19999
+19111
+11191'''
+          .split("\n")
+          .toList();
+
+      // when
+      final result = part1(inputSimple);
+
+      // thenR
+      expect(result, equals(8));
+    });
     test('p1 - given example', () {
       // when
       final result = part1(input);

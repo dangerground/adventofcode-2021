@@ -19,20 +19,53 @@ int part1(List<String> input) {
     path.add(WPoint(i, i, map.m[i][i]));
   }
 
+  // var paths = <List<WPoint>>[];
+  var paths = [path];
+  for (int i = 0; i < 10; i++) {
+    var end = WPoint(
+        map.width - 1, map.height - 1, map.m[map.height - 1][map.width - 1]);
+    var x = 0;
+    var y = 0;
+    WPoint point = WPoint(0, 0, map.m[0][0]);
+    var path = <WPoint>[point];
+    do {
+      if (Random.secure().nextBool()) {
+        x = min(map.width - 1, x + 1);
+      } else {
+        y = min(map.height -1, y + 1);
+      }
+      point = WPoint(x, y, map.m[y][x]);
+      path.add(point);
+    } while (point != end);
+    paths.add(path);
+  }
+
+  for (var value in paths) {
+    print("path: ${value.weight()}");
+  }
+
+
+  // path = paths.reduce((value, element) {
+  //   if (value.weight() < element.weight()) {
+  //     return value;
+  //   } else {
+  //     return element;
+  //   }
+  // });
+
   var steps = 100;
   var optimizeFor = 3;
   do {
     var changed = false;
     for (int i = 0; i < path.length - optimizeFor; i += optimizeFor) {
       var sub = path.sublist(i, i + optimizeFor);
-
       var w1 = sub.weight();
 
       var opt = map.findBest(sub.first, sub.last, []);
       if (opt != sub) {
         var w2 = opt!.weight();
-        // print("$w2 < $w1: $opt -- $sub");
         if (w2 < w1) {
+          print("$w2 < $w1: $opt -- $sub");
           var nPath = path.sublist(0, i);
           nPath.addAll(opt);
           nPath.addAll(path.sublist(i + optimizeFor));
@@ -50,17 +83,20 @@ int part1(List<String> input) {
 
     if (!changed) {
       optimizeFor++;
-      print("optimizeFor $optimizeFor");
-      if (optimizeFor > 20) {
+      print("optimizeFor $optimizeFor: ${path.weight()}");
+      if (optimizeFor > 25) {
+        print("abort ");
         break;
       }
     }
-
   } while (steps-- > 0);
 
   print(path);
 
   path.removeAt(0);
+
+  // 705 too high
+  // 691 too low
   return path.weight();
 }
 
@@ -83,29 +119,37 @@ class LocalMap {
   }
 
   List<WPoint>? findBest(WPoint p1, WPoint p2, List<WPoint> path) {
-    var nPath = [...path, p1];
     if (p1 == p2) {
-      return nPath;
+      return [...path, p2];
+    }
+
+    if (path.isNotEmpty && p1 == path.last) {
+      return null;
     }
 
     if (p1.x < 0 || p1.y < 0 || p1.x > p2.x || p1.y > p2.y) {
       return null;
     }
 
+    var nPath = [...path, p1];
+
     var x1 = findBest(WPoint(p1.x, p1.y + 1, wAt(p1.x, p1.y + 1)), p2, nPath);
     var x2 = findBest(WPoint(p1.x + 1, p1.y, wAt(p1.x + 1, p1.y)), p2, nPath);
+    // var x3 = findBest(WPoint(p1.x, p1.y - 1, wAt(p1.x, p1.y - 1)), p2, nPath);
+    // var x4 = findBest(WPoint(p1.x - 1, p1.y, wAt(p1.x - 1, p1.y)), p2, nPath);
 
-    if (x1 == null) {
-      return x2;
-    } else if (x2 == null) {
-      return x1;
-    } else {
-      if (x1.weight() < x2.weight()) {
-        return x1;
+    var options = [
+      x1,
+      x2 /*, x3, x4*/
+    ].where((element) => element != null);
+
+    return options.reduce((value, element) {
+      if (value!.weight() < element!.weight()) {
+        return value;
       } else {
-        return x2;
+        return element;
       }
-    }
+    });
   }
 
   int wAt(int x, int y) {
