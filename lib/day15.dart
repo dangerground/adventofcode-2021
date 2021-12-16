@@ -12,10 +12,38 @@ void main() {
 int part1(List<String> input) {
   var map = LocalMap(input);
 
-  var start = DateTime
-      .now()
-      .microsecondsSinceEpoch;
-  // create nodes
+  var nodes = createNodes(map);
+  addEdgesToNodes(nodes, map);
+
+  calcDistances(nodes);
+
+  return nodes
+      .firstWhere((e) => e == Node(map.width - 1, map.height - 1))
+      .distance;
+}
+
+void addEdgesToNodes(Set<Node> nodes, LocalMap map) {
+  var start = DateTime.now().microsecondsSinceEpoch;
+
+  // assign edges
+  nodes.forEach((e) {
+    var edges = <Node, int>{};
+    if (e.x + 1 < map.width)
+      edges[nodes.firstWhere((element) => element == Node(e.x + 1, e.y))] =
+          map.m[e.x + 1][e.y];
+    //if (e.x - 1 >= 0) edges[nodes.firstWhere((element) => element == Node(e.x - 1, e.y))] = map.m[e.x - 1][e.y];
+    if (e.y + 1 < map.height)
+      edges[nodes.firstWhere((element) => element == Node(e.x, e.y + 1))] =
+          map.m[e.x][e.y + 1];
+    //if (e.y - 1 >= 0) edges[nodes.firstWhere((element) => element == Node(e.x, e.y - 1))] = map.m[e.x][e.y - 1];
+    e.edges = edges;
+  });
+  print("addEdges: ${DateTime.now().microsecondsSinceEpoch - start}µs");
+}
+
+Set<Node> createNodes(LocalMap map) {
+  var start = DateTime.now().microsecondsSinceEpoch;
+
   var nodes = <Node>{};
   for (int x = 0; x < map.width; x++) {
     for (int y = 0; y < map.height; y++) {
@@ -23,31 +51,18 @@ int part1(List<String> input) {
     }
   }
 
-  // assign edges
-  nodes.forEach((e) {
-    var edges = <Node, int>{};
-    if (e.x + 1 < map.width)
-      edges[nodes.firstWhere((element) => element == Node(e.x + 1, e.y))] =
-      map.m[e.x + 1][e.y];
-    //if (e.x - 1 >= 0) edges[nodes.firstWhere((element) => element == Node(e.x - 1, e.y))] = map.m[e.x - 1][e.y];
-    if (e.y + 1 < map.height)
-      edges[nodes.firstWhere((element) => element == Node(e.x, e.y + 1))] =
-      map.m[e.x][e.y + 1];
-    //if (e.y - 1 >= 0) edges[nodes.firstWhere((element) => element == Node(e.x, e.y - 1))] = map.m[e.x][e.y - 1];
-    e.edges = edges;
-  });
+  print("createNodes: ${DateTime.now().microsecondsSinceEpoch - start}µs");
+  return nodes;
+}
+
+void calcDistances(Set<Node> nodes) {
 
   var settled = <Node>{};
 
   var unsettled = {nodes.first};
   unsettled.first.distance = 0;
-  print("init: ${DateTime
-      .now()
-      .microsecondsSinceEpoch - start}µs");
 
-  start = DateTime
-      .now()
-      .microsecondsSinceEpoch;
+  var start = DateTime.now().microsecondsSinceEpoch;
   do {
     Node pick = findShortest(unsettled);
     for (var element in pick.edges.entries) {
@@ -67,14 +82,8 @@ int part1(List<String> input) {
     //if (Random().nextInt(1000) == 0)
 
   } while (unsettled.isNotEmpty);
-  print("loop: ${DateTime
-      .now()
-      .microsecondsSinceEpoch - start}µs - ${settled.length} - ${unsettled
-      .length} ;: pick");
-
-  return nodes
-      .firstWhere((e) => e == Node(map.width - 1, map.height - 1))
-      .distance;
+  print(
+      "loop: ${DateTime.now().microsecondsSinceEpoch - start}µs - ${settled.length} - ${unsettled.length} ;: pick");
 }
 
 Node findShortest(Set<Node> unsettled) {
