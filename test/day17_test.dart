@@ -16,10 +16,10 @@ void main() {
   group("part2", () {
     test('p2 - given example', () {
       // when
-      final result = part1(20, 30, -10, -5);
+      final result = part2(20, 30, -10, -5);
 
       // then
-      expect(result, equals(666));
+      expect(result, equals(112));
     });
   });
 }
