@@ -1,8 +1,5 @@
 import 'dart:math';
 
-import 'package:adventofcode2021/util/input.dart';
-import 'package:quantity/quantity.dart';
-
 void main() {
   // target area: x=96..125, y=-144..-98
 
@@ -13,8 +10,8 @@ void main() {
 int solve(int xMin, int xMax, int yMin, int yMax, {int part = 1}) {
   var options = <Point>{};
   var highest = 0;
-  for (int x = xMax; x > 0; x--) {
-    for (int y = yMin * -1; y >= yMin; y--) {
+  for (var x = 0; x < xMax; x++) {
+    for (var y = yMin; y < yMin * -1; y++) {
       var pos = Point<int>(0, 0);
       var diff = Point<int>(x, y);
       var localHighest = 0;
