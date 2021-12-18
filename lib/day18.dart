@@ -9,21 +9,31 @@ void main() {
 }
 
 int part1(List<String> input) {
-  var snails = input
-      .map((e) => parseLine(e, 0))
-      .reduce((value, element) => value + element);
+  var snails = input.map((e) => parseLine(e, 0)).reduce((value, element) {
+    //print("  $value");
+    //print("+ $element");
+    var added = value + element;
 
-  var exploded = false;
-  print("snails: $snails");
-  do {
-    exploded = snails.explode();
-    print("after explodes: $snails");
-    snails.split();
-    print("after splits  : $snails");
-  } while (exploded);
+    var exploded = false;
+    var splitted = false;
+    do {
+//      print("n $added");
+      exploded = false;
+      while (added.explode()) {
+        exploded = true;
+        //print("o $added");
+      }
+      splitted = added.split();
+      //print("| $added");
+    } while (exploded || splitted);
+
+//    print("= $added");
+//    print("");
+    return added;
+  });
 
   print("final: $snails");
-  return 5;
+  return snails.magnitude();
 }
 
 Snail parseLine(String str, int depth) {
@@ -72,7 +82,7 @@ class Snail {
   int? value;
   int depth;
 
-  Snail(this.left, this.right, this.depth, {this.value}) {
+  Snail(this.left, this.right, this.depth, {this.value, this.parent}) {
     if (left != null) left!.parent = this;
     if (right != null) right!.parent = this;
   }
@@ -90,16 +100,22 @@ class Snail {
   }
 
   bool explode() {
-    bool changed = false;
+    if (left != null && left!.explode()) {
+      return true;
+    }
+    if (right != null && right!.explode()) {
+      return true;
+    }
+
     if (depth >= 4 && value == null) {
       // left
-      var l = firstLeft(parent);
+      var l = getLeft(this);
       if (l != null && l != this) {
         l.value = l.value! + left!.value!;
       }
 
       // right
-      var r = firstRight(parent);
+      var r = getRight(this);
       if (r != null && r != this) {
         r.value = r.value! + right!.value!;
       }
@@ -110,69 +126,66 @@ class Snail {
       return true;
     }
 
-    if (left != null && left!.explode()) {
-      return true;
-    }
-    if (right != null && right!.explode()) {
-      return true;
-    }
-
     return false;
   }
 
-  Snail? firstRight(Snail? p) {
+  Snail? getRight(Snail? p) {
+    if (p == null) {
+      return null;
+    }
 
-    while (p != null) {
-      if (p.right!.value != null) {
-        return p.right;
-      }
-      if (p.parent != null && p.parent!.right != p) {
-        var firstLeft = p.parent!.right;
-        while (firstLeft != null) {
-          if (firstLeft.value != null) {
-            return firstLeft;
-          }
-          firstLeft = firstLeft.left;
-        }
-      }
+    if (p.value != null) {
+      return p;
+    }
+
+    p = p.right;
+    while (p != null && p.parent?.right == p) {
       p = p.parent;
+    }
+
+    if (p?.parent?.right != null) {
+      var firstLeft = p?.parent?.right;
+      while (firstLeft != null) {
+        if (firstLeft.value != null) {
+          return firstLeft;
+        }
+        firstLeft = firstLeft.left;
+      }
     }
 
     return null;
   }
 
-  Snail? firstLeft(Snail? p) {
+  // _a_ => a ok
+  // [a,_b_] =>  a ok
+  // [a,_[b,c]_] => a ok
+  // [[a,b],_c_] => b
+  // [[a,b],_[c,d]_] => b
+  // [[a,[b,c]],_d_] => c
+  Snail? getLeft(Snail? p) {
+    if (p == null) {
+      return null;
+    }
 
-    while (p != null) {
-      if (p.left!.value != null) {
-        return p.left;
-      }
-      if (p.parent != null && p.parent!.left != p) {
-        var firstRight = p.parent!.left;
-        while (firstRight != null) {
-          if (firstRight.value != null) {
-            return firstRight;
-          }
-          firstRight = firstRight.right;
-        }
-      }
+    if (p.value != null) {
+      return p;
+    }
+
+    while (p != null && p.parent?.left == p) {
       p = p.parent;
     }
 
+    if (p?.parent?.left != null) {
+      var firstRight = p?.parent?.left;
+      while (firstRight != null) {
+        if (firstRight.value != null) {
+          return firstRight;
+        }
+        firstRight = firstRight.right;
+      }
+    }
+
     return null;
-  }
-
-  @override
-  bool operator ==(Object other) {
-    // TODO: implement ==
-    if (other is! Snail) {
-      return false;
-    }
-    if (value == null) {
-      return other.left == left && other.right == right;
-    }
-
-    return value == other.value;
   }
 
   @override
@@ -185,18 +198,34 @@ class Snail {
   }
 
   split() {
-    bool changed = false;
+    if (left != null && left!.split()) return true;
+    if (right != null && right!.split()) return true;
+
     if (value != null && value! > 9) {
-      var lVal = value! ~/ 2;
-      left = Snail(null, null, depth + 1, value: lVal);
-      right = Snail(null, null, depth + 1, value: value! - lVal);
+      var lVal = (value!.toDouble() / 2).floor();
+      var rVal = (value!.toDouble() / 2).ceil();
+      left = Snail(null, null, depth + 1, value: lVal, parent: this);
+      right = Snail(null, null, depth + 1, value: rVal, parent: this);
       value = null;
       return true;
     }
 
-    if (left != null) changed &= left!.split();
-    if (right != null) changed &= right!.split();
+    return false;
+  }
 
-    return changed;
+  int magnitude() {
+    var magnitude = 0;
+    if (left != null) {
+      magnitude += left!.magnitude() * 3;
+    }
+    if (right != null) {
+      magnitude += right!.magnitude() * 2;
+    }
+
+    if (value != null) {
+      magnitude += value!;
+    }
+
+    return magnitude;
   }
 }
