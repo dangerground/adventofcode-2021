@@ -11,28 +11,9 @@ void main() {
 }
 
 int part1(List<String> input) {
-  var snails = input.map((e) => parseLine(e, 0)).reduce((value, element) {
-    //print("  $value");
-    //print("+ $element");
-    var added = value + element;
-
-    var exploded = false;
-    var splitted = false;
-    do {
-//      print("n $added");
-      exploded = false;
-      while (added.explode()) {
-        exploded = true;
-        //print("o $added");
-      }
-      splitted = added.split();
-      //print("| $added");
-    } while (exploded || splitted);
-
-//    print("= $added");
-//    print("");
-    return added;
-  });
+  var snails = input
+      .map((e) => parseLine(e, 0))
+      .reduce((value, element) => value + element);
 
   print("final: $snails");
   return snails.magnitude();
@@ -87,21 +68,11 @@ int part2(List<String> input) {
 
       var check = one + two;
 
-      var exploded = false;
-      var splitted = false;
-      do {
-        exploded = false;
-        while (check.explode()) {
-          exploded = true;
-        }
-        splitted = check.split();
-      } while (exploded || splitted);
-
       var current = check.magnitude();
       highest = max(highest, current);
 
       if (current == highest) {
-        print ("sum ($highest): $check");
+        print("sum ($highest): $check");
       }
     }
   }
@@ -124,34 +95,46 @@ class Snail {
   }
 
   Snail operator +(Snail other) {
-    this.incDepth();
-    other.incDepth();
-    return Snail(this, other, 0);
+    _incDepth();
+    other._incDepth();
+    var update = Snail(this, other, 0);
+
+    var exploded = false;
+    var splitted = false;
+    do {
+      exploded = false;
+      while (update._explode()) {
+        exploded = true;
+      }
+      splitted = update._split();
+    } while (exploded || splitted);
+
+    return update;
   }
 
-  void incDepth() {
-    if (left != null) left!.incDepth();
-    if (right != null) right!.incDepth();
+  void _incDepth() {
+    if (left != null) left!._incDepth();
+    if (right != null) right!._incDepth();
     depth++;
   }
 
-  bool explode() {
-    if (left != null && left!.explode()) {
+  bool _explode() {
+    if (left != null && left!._explode()) {
       return true;
     }
-    if (right != null && right!.explode()) {
+    if (right != null && right!._explode()) {
       return true;
     }
 
     if (depth >= 4 && value == null) {
       // left
-      var l = getLeft(this);
+      var l = _getLeft(this);
       if (l != null && l != this) {
         l.value = l.value! + left!.value!;
       }
 
       // right
-      var r = getRight(this);
+      var r = _getRight(this);
       if (r != null && r != this) {
         r.value = r.value! + right!.value!;
       }
@@ -165,7 +148,7 @@ class Snail {
     return false;
   }
 
-  Snail? getRight(Snail? p) {
+  Snail? _getRight(Snail? p) {
     if (p == null) {
       return null;
     }
@@ -198,7 +181,7 @@ class Snail {
   // [[a,b],_c_] => b
   // [[a,b],_[c,d]_] => b
   // [[a,[b,c]],_d_] => c
-  Snail? getLeft(Snail? p) {
+  Snail? _getLeft(Snail? p) {
     if (p == null) {
       return null;
     }
@@ -233,9 +216,9 @@ class Snail {
     }
   }
 
-  split() {
-    if (left != null && left!.split()) return true;
-    if (right != null && right!.split()) return true;
+  _split() {
+    if (left != null && left!._split()) return true;
+    if (right != null && right!._split()) return true;
 
     if (value != null && value! > 9) {
       var lVal = (value!.toDouble() / 2).floor();
