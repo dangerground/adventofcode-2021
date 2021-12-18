@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:adventofcode2021/util/input.dart';
-import 'package:quantity/quantity.dart';
 
 void main() {
   final input = readLinesAsString(18);
@@ -15,8 +14,27 @@ int part1(List<String> input) {
       .map((e) => parseLine(e, 0))
       .reduce((value, element) => value + element);
 
-  print("final: $snails");
   return snails.magnitude();
+}
+
+int part2(List<String> input) {
+  var snails = input.map((e) => parseLine(e, 0)).toList();
+
+  var highest = 0;
+  for (var i = 0; i < snails.length; i++) {
+    for (var j = 0; j < snails.length; j++) {
+      if (j == i) {
+        continue;
+      }
+      // reset
+      var snails = input.map((e) => parseLine(e, 0)).toList();
+
+      var check = snails[i] + snails[j];
+      highest = max(highest, check.magnitude());
+    }
+  }
+
+  return highest;
 }
 
 Snail parseLine(String str, int depth) {
@@ -51,34 +69,6 @@ Snail parseLine(String str, int depth) {
 
   // new num
   return Snail(null, null, depth, value: int.parse(str[0]));
-}
-
-int part2(List<String> input) {
-  var snails = input.map((e) => parseLine(e, 0)).toList();
-
-  var highest = 0;
-  for (var i = 0; i < snails.length; i++) {
-    for (var j = 0; j < snails.length; j++) {
-      if (j == i) {
-        continue;
-      }
-      var snails = input.map((e) => parseLine(e, 0)).toList();
-      var one = snails[i];
-      var two = snails[j];
-
-      var check = one + two;
-
-      var current = check.magnitude();
-      highest = max(highest, current);
-
-      if (current == highest) {
-        print("sum ($highest): $check");
-      }
-    }
-  }
-
-  print("final: $snails");
-  return highest;
 }
 
 class Snail {
