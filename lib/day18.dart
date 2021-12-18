@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:adventofcode2021/util/input.dart';
 import 'package:quantity/quantity.dart';
 
@@ -71,7 +73,41 @@ Snail parseLine(String str, int depth) {
 }
 
 int part2(List<String> input) {
-  return -1;
+  var snails = input.map((e) => parseLine(e, 0)).toList();
+
+  var highest = 0;
+  for (var i = 0; i < snails.length; i++) {
+    for (var j = 0; j < snails.length; j++) {
+      if (j == i) {
+        continue;
+      }
+      var snails = input.map((e) => parseLine(e, 0)).toList();
+      var one = snails[i];
+      var two = snails[j];
+
+      var check = one + two;
+
+      var exploded = false;
+      var splitted = false;
+      do {
+        exploded = false;
+        while (check.explode()) {
+          exploded = true;
+        }
+        splitted = check.split();
+      } while (exploded || splitted);
+
+      var current = check.magnitude();
+      highest = max(highest, current);
+
+      if (current == highest) {
+        print ("sum ($highest): $check");
+      }
+    }
+  }
+
+  print("final: $snails");
+  return highest;
 }
 
 class Snail {
