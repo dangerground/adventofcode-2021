@@ -11,14 +11,14 @@ void main() {
 
 int part1(List<String> input) {
   var snails = input
-      .map((e) => parseLine(e, 0))
+      .map((e) => readSnails(e, 0))
       .reduce((value, element) => value + element);
 
   return snails.magnitude();
 }
 
 int part2(List<String> input) {
-  var snails = input.map((e) => parseLine(e, 0)).toList();
+  var snails = input.map((e) => readSnails(e, 0)).toList();
 
   var highest = 0;
   for (var i = 0; i < snails.length; i++) {
@@ -27,7 +27,7 @@ int part2(List<String> input) {
         continue;
       }
       // reset
-      var snails = input.map((e) => parseLine(e, 0)).toList();
+      var snails = input.map((e) => readSnails(e, 0)).toList();
 
       var check = snails[i] + snails[j];
       highest = max(highest, check.magnitude());
@@ -37,38 +37,36 @@ int part2(List<String> input) {
   return highest;
 }
 
-Snail parseLine(String str, int depth) {
+Snail readSnails(String str, int depth) {
   //  new  sub-snail
   if (str.startsWith("[")) {
-    int i = 1;
-    int brackets = 0;
-    do {
-      if (str[i] == "[") {
-        brackets++;
-      } else if (str[i] == "]") {
-        brackets--;
-      }
-      i++;
-    } while (brackets > 0);
-    var left = parseLine(str.substring(1, i), depth + 1);
+    int i = findEnd(str, 0);
+    var left = readSnails(str.substring(1, i), depth + 1);
 
     int rStart = i + 1;
-    i = 0;
-    brackets = 0;
-    do {
-      if (str[rStart + i] == "[") {
-        brackets++;
-      } else if (str[rStart + i] == "]") {
-        brackets--;
-      }
-      i++;
-    } while (brackets > 0);
-    var right = parseLine(str.substring(rStart, rStart + i), depth + 1);
+    int i2 = findEnd(str, i);
+    var right = readSnails(str.substring(rStart, rStart + i2), depth + 1);
+
     return Snail(left, right, depth);
   }
 
   // new num
   return Snail(null, null, depth, value: int.parse(str[0]));
+}
+
+int findEnd(String str, int start) {
+  int i = 1;
+  int brackets = 0;
+  do {
+    if (str[start+i] == "[") {
+      brackets++;
+    } else if (str[start+i] == "]") {
+      brackets--;
+    }
+    i++;
+  } while (brackets > 0);
+
+  return i;
 }
 
 class Snail {
@@ -119,13 +117,13 @@ class Snail {
     if (depth >= 4 && value == null) {
       // left
       var l = _getLeft(this);
-      if (l != null && l != this) {
+      if (l != null) {
         l.value = l.value! + left!.value!;
       }
 
       // right
       var r = _getRight(this);
-      if (r != null && r != this) {
+      if (r != null) {
         r.value = r.value! + right!.value!;
       }
 
