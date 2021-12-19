@@ -29,7 +29,7 @@ void main() {
       final result = part2(input);
 
       // then
-      expect(result, equals(666));
+      expect(result, equals(315));
     });
   });
 }

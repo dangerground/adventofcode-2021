@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:adventofcode2021/util/input.dart';
+import 'package:collection/collection.dart';
 
 void main() {
   final input = readLinesAsString(15);
@@ -13,7 +12,6 @@ int part1(List<String> input) {
   var map = LocalMap(input);
 
   var nodes = createNodes(map);
-  addEdgesToNodes(nodes, map);
 
   calcDistances(nodes);
 
@@ -22,85 +20,84 @@ int part1(List<String> input) {
       .distance;
 }
 
-void addEdgesToNodes(Set<Node> nodes, LocalMap map) {
-  var start = DateTime.now().microsecondsSinceEpoch;
-
-  // assign edges
-  nodes.forEach((e) {
-    var edges = <Node, int>{};
-    if (e.x + 1 < map.width)
-      edges[nodes.firstWhere((element) => element == Node(e.x + 1, e.y))] =
-          map.m[e.x + 1][e.y];
-    //if (e.x - 1 >= 0) edges[nodes.firstWhere((element) => element == Node(e.x - 1, e.y))] = map.m[e.x - 1][e.y];
-    if (e.y + 1 < map.height)
-      edges[nodes.firstWhere((element) => element == Node(e.x, e.y + 1))] =
-          map.m[e.x][e.y + 1];
-    //if (e.y - 1 >= 0) edges[nodes.firstWhere((element) => element == Node(e.x, e.y - 1))] = map.m[e.x][e.y - 1];
-    e.edges = edges;
-  });
-  print("addEdges: ${DateTime.now().microsecondsSinceEpoch - start}µs");
-}
-
 Set<Node> createNodes(LocalMap map) {
-  var start = DateTime.now().microsecondsSinceEpoch;
+  var start = DateTime.now().millisecondsSinceEpoch;
 
   var nodes = <Node>{};
   for (int x = 0; x < map.width; x++) {
     for (int y = 0; y < map.height; y++) {
-      nodes.add(Node(x, y));
+      var edges = <Edge>{};
+      if (x + 1 < map.width) edges.add(Edge(x + 1, y, map.m[x + 1][y]));
+      if (y + 1 < map.height) edges.add(Edge(x, y + 1, map.m[x][y + 1]));
+      if (x - 1 >= 0) edges.add(Edge(x - 1, y, map.m[x - 1][y]));
+      if (y - 1 >= 0) edges.add(Edge(x, y - 1, map.m[x][y - 1]));
+
+      nodes.add(Node(x, y, edges: edges));
     }
   }
 
-  print("createNodes: ${DateTime.now().microsecondsSinceEpoch - start}µs");
+  print("createNodes: ${DateTime.now().millisecondsSinceEpoch - start}ms");
   return nodes;
 }
 
 void calcDistances(Set<Node> nodes) {
-
   var settled = <Node>{};
+  nodes.first.distance = 0;
 
-  var unsettled = {nodes.first};
-  unsettled.first.distance = 0;
+  var unsettled =
+      PriorityQueue<Node>((a, b) => a.distance.compareTo(b.distance));
+  unsettled.add(nodes.first);
 
-  var start = DateTime.now().microsecondsSinceEpoch;
   do {
-    Node pick = findShortest(unsettled);
-    for (var element in pick.edges.entries) {
-      if (settled.contains(element.key)) {
+    Node pick = unsettled.removeFirst();
+    for (var element in pick.edges) {
+      var node = Node(element.x, element.y);
+      if (settled.contains(node)) {
         continue;
       }
 
-      unsettled.add(nodes.firstWhere((e) => e == element.key));
+      node = nodes.firstWhere((e) => e == node);
+      unsettled.add(node);
 
-      if (pick.distance + element.value < element.key.distance) {
-        element.key.distance = pick.distance + element.value;
+      if (pick.distance + element.weight < node.distance) {
+        node.distance = pick.distance + element.weight;
       }
     }
 
     unsettled.remove(pick);
     settled.add(pick);
-    //if (Random().nextInt(1000) == 0)
 
   } while (unsettled.isNotEmpty);
-  print(
-      "loop: ${DateTime.now().microsecondsSinceEpoch - start}µs - ${settled.length} - ${unsettled.length} ;: pick");
-}
-
-Node findShortest(Set<Node> unsettled) {
-  var distance = unsettled.first.distance;
-  Node shortNode = unsettled.first;
-  for (var element in unsettled) {
-    if (element.distance < distance) {
-      distance = element.distance;
-      shortNode = element;
-    }
-  }
-
-  return shortNode;
 }
 
 int part2(List<String> input) {
-  return -1;
+  // extend columns
+  var newput = <List<int>>[];
+  for (var value in input) {
+    var line = <int>[];
+    var numbers = value.split("").map((e) => int.parse(e));
+    for (var i = 0; i < 5; i++) {
+      line.addAll(numbers.map((e) => e + i <= 9 ? e + i : (e + i) % 9));
+    }
+    newput.add(line);
+  }
+
+  // rows
+  var newput2 = <String>[];
+  for (var i = 0; i < 5; i++) {
+    for (var value in newput) {
+      var line = value.map((e) => e + i <= 9 ? e + i : (e + i) % 9).join();
+      newput2.add(line);
+    }
+  }
+
+  var map = LocalMap(newput2);
+  var nodes = createNodes(map);
+  calcDistances(nodes);
+
+  return nodes
+      .firstWhere((e) => e == Node(map.width - 1, map.height - 1))
+      .distance;
 }
 
 class LocalMap {
@@ -122,10 +119,9 @@ class Node {
   int x;
   int y;
 
-  Map<Node, int> edges;
+  Set<Edge> edges;
 
   int distance = 0x7fffffffffffffff;
-  Node? previous;
 
   Node(this.x, this.y, {this.edges = const {}});
 
@@ -141,4 +137,12 @@ class Node {
   String toString() {
     return "($x $y)[${distance}]";
   }
+}
+
+class Edge {
+  int x;
+  int y;
+  int weight;
+
+  Edge(this.x, this.y, this.weight);
 }
