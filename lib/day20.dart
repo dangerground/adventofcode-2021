@@ -6,63 +6,14 @@ import 'package:quantity/quantity.dart';
 void main() {
   final input = readLinesInBatches(20);
 
-  print("Solution part1: [ ${part1(input)} ]");
+  //print("Solution part1: [ ${part1(input)} ]");
   print("Solution part2: [ ${part2(input)} ]");
 }
 
 const defaultPixel = '.';
 
 int part1(List<List<String>> batches) {
-  var filter = batches[0][0];
-
-  var input = LightMap(batches[1]);
-  var output = LightMap([""]);
-
-  print(input);
-  print("");
-
-  var padding = 2;
-  var steps = 2;
-  for (int s = 0; s < steps; s++) {
-    var minY = input.minY - 1;
-    var minX = input.minX - 1;
-    var maxY = input.maxY + 1;
-    var maxX = input.maxX + 1;
-
-    for (int y = minY; y <= maxY; y++) {
-      for (int x = minX; x <= maxX; x++) {
-        if (input.get(x, y) == null) {
-          input.set(x, y, defaultPixel);
-        }
-      }
-    }
-
-    output = LightMap([""]);
-    for (int y = input.minY - padding; y <= input.maxY + padding; y++) {
-      for (int x = input.minX - padding; x <= input.maxX + padding; x++) {
-        int ref = getCorrection(input, x, y);
-        output.set(x, y, filter[ref]);
-      }
-    }
-    input = output;
-
-//    print(output);
-//    print("");
-  }
-
-// count
-  var count = 0;
-  for (int x = output.minX + padding * steps;
-      x <= output.maxX - padding * steps;
-      x++) {
-    for (int y = output.minY + padding * steps;
-        y <= output.maxY - padding * steps;
-        y++) {
-      count += output.get(x, y) == "#" ? 1 : 0;
-    }
-  }
-
-  return count;
+  return solve(batches, 2);
 }
 
 int getCorrection(LightMap input, int x, int y) {
@@ -80,8 +31,60 @@ int getCorrection(LightMap input, int x, int y) {
   return binary.value;
 }
 
-int part2(List<List<String>> input) {
-  return -1;
+int part2(List<List<String>> batches) {
+  return solve(batches, 50);
+}
+
+int solve(List<List<String>> batches, int steps) {
+  var filter = batches[0][0];
+
+  var input = LightMap(batches[1]);
+  var output = LightMap([""]);
+
+  print(input);
+  print("");
+
+  var padding = steps*3;
+
+  var minY = input.minY - padding;
+  var minX = input.minX - padding;
+  var maxY = input.maxY + padding;
+  var maxX = input.maxX + padding;
+
+  for (int y = minY; y <= maxY; y++) {
+    for (int x = minX; x <= maxX; x++) {
+      if (input.get(x, y) == null) {
+        input.set(x, y, defaultPixel);
+      }
+    }
+  }
+
+  for (int s = 0; s < steps; s++) {
+    print("step: $s");
+    output = LightMap([""]);
+    for (int y = input.minY; y <= input.maxY; y++) {
+      for (int x = input.minX; x <= input.maxX; x++) {
+        int ref = getCorrection(input, x, y);
+        output.set(x, y, filter[ref]);
+      }
+    }
+    input = output;
+
+  //    print(output);
+  //    print("");
+  }
+
+  print(output);
+
+  // count
+  var count = 0;
+  for (int x = output.minX+steps*2; x <= output.maxX-steps*2; x++) {
+    for (int y = output.minY+steps*2; y <= output.maxY-steps*2; y++) {
+      count += output.get(x, y) == "#" ? 1 : 0;
+    }
+  }
+
+  return count;
 }
 
 class LightMap {
